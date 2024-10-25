@@ -6,3 +6,5 @@ concentration: [120]
 error_rate: [0.0005]
 num_reads: [500]
 num_cells: [100]
+seed: range(1, 101)
+
