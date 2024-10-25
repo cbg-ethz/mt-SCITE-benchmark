@@ -1,0 +1,8 @@
+# config.yaml
+
+## Parameter ranges for simulation of the data ##
+num_mutations: [10, 50]
+concentration: [120]
+error_rate: [0.0005]
+num_reads: [500]
+num_cells: [100]
