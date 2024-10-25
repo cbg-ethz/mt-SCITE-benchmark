@@ -124,3 +124,21 @@ def simulate_read_counts(mutation_tree, error_rate, num_reads, num_cells):
             read_counts[cell, mutation_nr] = allele_counts
 
     return read_counts
+
+def transform_array_to_presence_absence_matrix(array):
+    """
+    Transforms a 3D numpy array (cells x mutations x states) into a presence/absence matrix.
+    Rows represent mutations, columns represent cells.
+    Presence is marked as 1 if any of X, Y, Z is greater than 0 for a mutation in a given cell.
+    
+    Parameters:
+    array (numpy array): 3D numpy array where shape is (cells, mutations, states), and states are [R, X, Y, Z].
+    
+    Returns:
+    numpy array: A presence/absence matrix with mutations as rows and cells as columns. This will be used as the input to scite.
+    """
+    # Extract the X, Y, Z counts (columns 1, 2, 3 in the array)
+    # Check if any of X, Y, Z > 0 for each mutation in each cell
+    presence_absence_matrix = (array[:, :, 1:] > 0).any(axis=2).astype(int)
+    
+    return presence_absence_matrix.T  # Transpose to match mutations as rows and cells as columns
