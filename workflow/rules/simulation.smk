@@ -21,7 +21,7 @@ rule adapt_data_for_scite:
     output:
         "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_input_{seed}.txt"
 
-    shell:"""python ../src/simulation/adapt_data_for_scite.py ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/read_counts__{wildcards.seed}.npy ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/ {wildcards.seed}"""
+    shell:"""python ../src/simulation/adapt_data_for_scite.py ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/read_counts_{wildcards.seed}.npy ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/ {wildcards.seed}"""
 
 
 rule adapt_data_for_merlin:
