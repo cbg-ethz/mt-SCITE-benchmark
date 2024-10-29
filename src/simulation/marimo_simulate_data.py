@@ -10,7 +10,8 @@ def __():
     import networkx as nx
     import numpy as np
     import matplotlib.pyplot as plt
-    return mo, np, nx, plt
+    import pandas as pd
+    return mo, np, nx, pd, plt
 
 
 @app.cell
@@ -354,13 +355,35 @@ def __():
 
 @app.cell
 def __(mo):
-    mo.md(
-        r"""
-        # Prep data for different inference methods
-
-        """
-    )
+    mo.md(r"""# Prep data for different inference methods""")
     return
+
+
+@app.cell
+def __():
+    return
+
+
+@app.cell
+def __(np):
+    # Example data with the provided 2x5x4 array
+    array_two_cells = np.array([
+        # Cell 1
+        [[458, 41, 1, 0],  # Mutation 1
+         [479, 20, 0, 1],  # Mutation 2
+         [500, 0, 0, 0],   # Mutation 3
+         [500, 0, 0, 0],   # Mutation 4
+         [500, 0, 0, 0]],  # Mutation 5
+        # Cell 2
+        [[458, 38, 1, 3],   # Mutation 1
+         [470, 2, 18, 10],   # Mutation 2
+         [500, 0, 0, 0],   # Mutation 3
+         [500, 0, 0, 0],   # Mutation 4
+         [500, 0, 0, 0]]   # Mutation 5
+    ])
+
+    np.save("test_data.npy", array_two_cells)
+    return (array_two_cells,)
 
 
 @app.cell
@@ -370,49 +393,133 @@ def __(mo):
 
 
 @app.cell
-def __(np):
+def __(array_two_cells):
     def transform_array_to_presence_absence_matrix(array):
         """
         Transforms a 3D numpy array (cells x mutations x states) into a presence/absence matrix.
         Rows represent mutations, columns represent cells.
         Presence is marked as 1 if any of X, Y, Z is greater than 0 for a mutation in a given cell.
-        
+
         Parameters:
         array (numpy array): 3D numpy array where shape is (cells, mutations, states), and states are [R, X, Y, Z].
-        
+
         Returns:
         numpy array: A presence/absence matrix with mutations as rows and cells as columns.
         """
         # Extract the X, Y, Z counts (columns 1, 2, 3 in the array)
         # Check if any of X, Y, Z > 0 for each mutation in each cell
         presence_absence_matrix = (array[:, :, 1:] > 0).any(axis=2).astype(int)
-        
+
         return presence_absence_matrix.T  # Transpose to match mutations as rows and cells as columns
 
-    # Example usage with the provided 2x5x4 array
-    array_two_cells = np.array([
-        # Cell 1
-        [[458, 41, 1, 0],  # Mutation 1
-         [479, 20, 0, 1],  # Mutation 2
-         [500, 0, 0, 0],   # Mutation 3
-         [500, 0, 0, 0],   # Mutation 4
-         [500, 0, 0, 0]],  # Mutation 5
-        # Cell 2
-        [[458, 0, 1, 0],   # Mutation 1
-         [479, 0, 0, 1],   # Mutation 2
-         [500, 0, 0, 0],   # Mutation 3
-         [500, 0, 0, 0],   # Mutation 4
-         [500, 0, 0, 0]]   # Mutation 5
-    ])
 
     # Apply the function to the example array
     presence_absence_matrix = transform_array_to_presence_absence_matrix(array_two_cells)
     print(presence_absence_matrix)
     return (
-        array_two_cells,
         presence_absence_matrix,
         transform_array_to_presence_absence_matrix,
     )
+
+
+@app.cell
+def __(mo):
+    mo.md(r"""For MERLIN""")
+    return
+
+
+@app.cell
+def __(np, pd):
+    def transform_to_variant_matrix(read_count_matrix):
+        """
+        Transforms the original read count matrix into a variant matrix.
+
+        Parameters:
+        - read_count_matrix (np.array): A 3D numpy array where each cell contains 
+                                        counts for each mutation state.
+
+        Returns:
+        - pd.DataFrame: A DataFrame representing the variant matrix, where each row 
+                        is a mutation, each column is a cell, and each entry 
+                        represents the number of variant reads.
+        """
+        num_cells = read_count_matrix.shape[0]
+        num_mutations = read_count_matrix.shape[1]
+
+        # Initialize an empty variant matrix
+        variant_matrix = np.zeros((num_mutations, num_cells), dtype=int)
+
+        # Populate the variant matrix
+        for cell_idx in range(num_cells):
+            for mut_idx in range(num_mutations):
+                # Sum the variant reads (assuming these are the 2nd, 3rd, and 4th entries)
+                variant_reads = read_count_matrix[cell_idx, mut_idx, 1:]
+                variant_matrix[mut_idx, cell_idx] = np.sum(variant_reads)
+
+        # Convert the matrix to a DataFrame with appropriate row and column names
+        variant_df = pd.DataFrame(
+            variant_matrix,
+            index=[f"mut{i+1}" for i in range(num_mutations)],
+            columns=[f"cell{j+1}" for j in range(num_cells)]
+        )
+
+        return variant_df
+
+
+    def transform_to_total_matrix(read_count_matrix):
+        """
+        Transforms the original read count matrix into a total matrix.
+
+        Parameters:
+        - read_count_matrix (np.array): A 3D numpy array where each cell contains 
+                                        counts for each mutation state.
+
+        Returns:
+        - pd.DataFrame: A DataFrame representing the total matrix, where each row 
+                        is a mutation, each column is a cell, and each entry 
+                        represents the total number of reads for that mutation.
+        """
+        num_cells = read_count_matrix.shape[0]
+        num_mutations = read_count_matrix.shape[1]
+
+        # Initialize an empty total matrix
+        total_matrix = np.zeros((num_mutations, num_cells), dtype=int)
+
+        # Populate the total matrix
+        for cell_idx in range(num_cells):
+            for mut_idx in range(num_mutations):
+                # Sum all reads for each mutation across all states
+                total_reads = np.sum(read_count_matrix[cell_idx, mut_idx, :])
+                total_matrix[mut_idx, cell_idx] = total_reads
+
+        # Convert the matrix to a DataFrame with appropriate row and column names
+        total_df = pd.DataFrame(
+            total_matrix,
+            index=[f"mut{i+1}" for i in range(num_mutations)],
+            columns=[f"cell{j+1}" for j in range(num_cells)]
+        )
+
+        return total_df
+    return transform_to_total_matrix, transform_to_variant_matrix
+
+
+@app.cell
+def __(array_two_cells, transform_to_variant_matrix):
+    transform_to_variant_matrix(array_two_cells)
+    return
+
+
+@app.cell
+def __(array_two_cells, transform_to_total_matrix):
+    total_matrix_df = transform_to_total_matrix(array_two_cells)
+    total_matrix_df
+    return (total_matrix_df,)
+
+
+@app.cell
+def __():
+    #total_matrix_df.to_csv("total_matrix.csv", header=[f"cell{i+1}" for i in range(total_matrix_df.shape[1])])
+    return
 
 
 if __name__ == "__main__":

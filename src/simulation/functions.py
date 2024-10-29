@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 def reparameterize_beta(mode, concentration):
     """
@@ -142,3 +143,75 @@ def transform_array_to_presence_absence_matrix(array):
     presence_absence_matrix = (array[:, :, 1:] > 0).any(axis=2).astype(int)
     
     return presence_absence_matrix.T  # Transpose to match mutations as rows and cells as columns
+
+
+def transform_to_variant_matrix(read_count_matrix):
+    """
+    Transforms the original read count matrix into a variant matrix.
+    
+    Parameters:
+    - read_count_matrix (np.array): A 3D numpy array where each cell contains 
+                                    counts for each mutation state.
+    
+    Returns:
+    - pd.DataFrame: A DataFrame representing the variant matrix, where each row 
+                    is a mutation, each column is a cell, and each entry 
+                    represents the number of variant reads.
+    """
+    num_cells = read_count_matrix.shape[0]
+    num_mutations = read_count_matrix.shape[1]
+    
+    # Initialize an empty variant matrix
+    variant_matrix = np.zeros((num_mutations, num_cells), dtype=int)
+    
+    # Populate the variant matrix
+    for cell_idx in range(num_cells):
+        for mut_idx in range(num_mutations):
+            # Sum the variant reads (assuming these are the 2nd, 3rd, and 4th entries)
+            variant_reads = read_count_matrix[cell_idx, mut_idx, 1:]
+            variant_matrix[mut_idx, cell_idx] = np.sum(variant_reads)
+    
+    # Convert the matrix to a DataFrame with appropriate row and column names
+    variant_df = pd.DataFrame(
+        variant_matrix,
+        index=[f"mut{i+1}" for i in range(num_mutations)],
+        columns=[f"cell{j+1}" for j in range(num_cells)]
+    )
+    
+    return variant_df
+
+
+def transform_to_total_matrix(read_count_matrix):
+    """
+    Transforms the original read count matrix into a total matrix.
+    
+    Parameters:
+    - read_count_matrix (np.array): A 3D numpy array where each cell contains 
+                                    counts for each mutation state.
+    
+    Returns:
+    - pd.DataFrame: A DataFrame representing the total matrix, where each row 
+                    is a mutation, each column is a cell, and each entry 
+                    represents the total number of reads for that mutation.
+    """
+    num_cells = read_count_matrix.shape[0]
+    num_mutations = read_count_matrix.shape[1]
+    
+    # Initialize an empty total matrix
+    total_matrix = np.zeros((num_mutations, num_cells), dtype=int)
+    
+    # Populate the total matrix
+    for cell_idx in range(num_cells):
+        for mut_idx in range(num_mutations):
+            # Sum all reads for each mutation across all states
+            total_reads = np.sum(read_count_matrix[cell_idx, mut_idx, :])
+            total_matrix[mut_idx, cell_idx] = total_reads
+    
+    # Convert the matrix to a DataFrame with appropriate row and column names
+    total_df = pd.DataFrame(
+        total_matrix,
+        index=[f"mut{i+1}" for i in range(num_mutations)],
+        columns=[f"cell{j+1}" for j in range(num_cells)]
+    )
+    
+    return total_df

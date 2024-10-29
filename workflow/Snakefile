@@ -10,7 +10,7 @@ seeds = range(1, 2)
 rule all:
     input:
         expand(
-            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_{seed}_ml0.newick",
+            "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/merlin_variant_matrix_{seed}.csv",
             num_mutations=config['num_mutations'],
             concentration=config['concentration'],
             error_rate=config['error_rate'],
@@ -18,6 +18,18 @@ rule all:
             num_cells=config['num_cells'],
             seed=seeds
         )
+        
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_{seed}_ml0.newick",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             seed=seeds
+#         )
 
 
 # Include data simulation
