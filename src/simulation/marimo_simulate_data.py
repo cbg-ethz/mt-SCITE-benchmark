@@ -323,7 +323,7 @@ def __(mo):
 @app.cell
 def __(np, nx, simulate_mutation_freq_tree):
     np.random.seed(1)
-    mf_tree = simulate_mutation_freq_tree(num_mutations=5, concentration=50)
+    mf_tree = simulate_mutation_freq_tree(num_mutations=10, concentration=120)
     mut_freq = nx.get_node_attributes(mf_tree, 'mutation_freq')
     mut_freq
     return mf_tree, mut_freq
@@ -396,7 +396,7 @@ def __(mo):
 def __(array_two_cells):
     def transform_array_to_presence_absence_matrix(array):
         """
-        Transforms a 3D numpy array (cells x mutations x states) into a presence/absence matrix.
+        x  into a presence/absence matrix.
         Rows represent mutations, columns represent cells.
         Presence is marked as 1 if any of X, Y, Z is greater than 0 for a mutation in a given cell.
 
