@@ -3,8 +3,10 @@
 ## Parameter ranges for simulation of the data ##
 num_mutations: [10, 50]
 concentration: [120]
-error_rate: [0.0005]
+error_rate: [0.0005, 0.005, 0.05]
 num_reads: [500]
-num_cells: [100]
+num_cells: [100, 500]
 seed: range(1, 101)
 
+## Paramter ranges for inference using mt-scite
+inf_error_rates: [0.0005, 0.005, 0.05]
