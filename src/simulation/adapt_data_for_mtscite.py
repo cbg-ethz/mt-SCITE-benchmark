@@ -40,7 +40,7 @@ def main(input_file, output_file, error_rate):
 if __name__ == "__main__":
     # Command-line argument parsing
     if len(sys.argv) != 4:
-        print("Usage: python script_name.py <input_file> <output_file> <error_rate>")
+        print("Usage: python adapt_data_for_mtscite.py <input_file> <output_file> <error_rate>")
         sys.exit(1)
     
     input_file = sys.argv[1]
