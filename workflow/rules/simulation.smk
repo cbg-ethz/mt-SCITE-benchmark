@@ -12,6 +12,9 @@ rule simulate_data:
         num_cells=lambda wildcards: wildcards.num_cells,
         seed=lambda wildcards: wildcards.seed
 
+    #conda:
+    #    "merlin.yml"
+
     shell: """python ../src/simulation/simulate_data.py {params.num_mutations} {params.concentration} {params.error_rate} {params.num_reads} {params.num_cells} ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells} {params.seed}"""
 
 
@@ -29,6 +32,9 @@ rule adapt_data_for_merlin:
         "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/read_counts_{seed}.npy"
     output:
         "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/merlin_variant_matrix_{seed}.csv"
+
+    #conda:
+    #    "merlin.yml"
 
     shell:"""python ../src/simulation/adapt_data_for_merlin.py ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/read_counts_{wildcards.seed}.npy ../results/simulated_data/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/ {wildcards.seed}"""
 
