@@ -4,13 +4,26 @@ import itertools
 
 configfile: "config.yaml"
 
-seeds = range(1, 2)
+seeds = range(1, 11)
 
-# Define the rule to simulate data for all combinations
+
 # rule all:
 #     input:
 #         expand(
-#             "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/merlin_variant_matrix_{seed}.csv",
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/mt_scite_mutation_prob_{inf_error_rate}_{seed}_map0.newick",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             inf_error_rate=config['inf_error_rates'],
+#             seed=seeds
+#         )
+
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/merlin_{seed}_clone_tree_edge_list.txt",
 #             num_mutations=config['num_mutations'],
 #             concentration=config['concentration'],
 #             error_rate=config['error_rate'],
@@ -19,10 +32,22 @@ seeds = range(1, 2)
 #             seed=seeds
 #         )
         
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_{error_rate}_{seed}_ml0.newick",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             seed=seeds
+#         )
+
 rule all:
     input:
         expand(
-            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_{seed}_ml0.newick",
+            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/val_scores.txt",
             num_mutations=config['num_mutations'],
             concentration=config['concentration'],
             error_rate=config['error_rate'],
@@ -32,6 +57,10 @@ rule all:
         )
 
 
+
+
 # Include data simulation
 include: 'rules/simulation.smk'
 include: 'rules/run_scite.smk'
+include: 'rules/run_merlin.smk'
+include: 'rules/run_mt-scite.smk'
