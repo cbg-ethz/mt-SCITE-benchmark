@@ -47,5 +47,8 @@ rule perform_kcval_to_learn_error:
     output:
         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/val_scores.txt"
 
-    shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/ --directory {input} -o {input}"""
+    params:
+        input_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}"
+
+    shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir}"""
         
