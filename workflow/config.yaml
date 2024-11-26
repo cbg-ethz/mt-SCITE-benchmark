@@ -6,8 +6,8 @@ concentration: [120]
 error_rate: [0.0005, 0.005, 0.05]
 num_reads: [500]
 num_cells: [100, 500]
-seed: range(1, 101)
-initial_mutation_freq: [0.01, 0.1]
+seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+initial_mutation_freqs: [0.01, 0.1]
 
 ## Paramter ranges for inference using mt-scite
 inf_error_rates: [0.0005, 0.005, 0.05]

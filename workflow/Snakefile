@@ -4,56 +4,77 @@ import itertools
 
 configfile: "config.yaml"
 
-seeds = range(1, 11)
 
-
+# run simulation
 # rule all:
 #     input:
 #         expand(
-#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/mt_scite_mutation_prob_{inf_error_rate}_{seed}_map0.newick",
+#             "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/tree_{seed}.gml",
 #             num_mutations=config['num_mutations'],
 #             concentration=config['concentration'],
 #             error_rate=config['error_rate'],
 #             num_reads=config['num_reads'],
 #             num_cells=config['num_cells'],
 #             inf_error_rate=config['inf_error_rates'],
-#             seed=seeds
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
 #         )
 
+# run mt scite with fixed error rates
 # rule all:
 #     input:
 #         expand(
-#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/merlin_{seed}_clone_tree_edge_list.txt",
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/mt_scite_mutation_prob_{inf_error_rate}_{seed}_map0.newick",
 #             num_mutations=config['num_mutations'],
 #             concentration=config['concentration'],
 #             error_rate=config['error_rate'],
 #             num_reads=config['num_reads'],
 #             num_cells=config['num_cells'],
-#             seed=seeds
+#             inf_error_rate=config['inf_error_rates'],
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
 #         )
-        
+
+# run merlin
 # rule all:
 #     input:
 #         expand(
-#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/scite_{error_rate}_{seed}_ml0.newick",
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/merlin_{seed}_clone_tree_edge_list.txt",
 #             num_mutations=config['num_mutations'],
 #             concentration=config['concentration'],
 #             error_rate=config['error_rate'],
 #             num_reads=config['num_reads'],
 #             num_cells=config['num_cells'],
-#             seed=seeds
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
 #         )
 
+#run scite
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/scite_{error_rate}_{seed}_ml0.newick",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
+#         )
+
+# run mt scite with error rate learning
 rule all:
     input:
         expand(
-            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/val_scores.txt",
+            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
             num_mutations=config['num_mutations'],
             concentration=config['concentration'],
             error_rate=config['error_rate'],
             num_reads=config['num_reads'],
             num_cells=config['num_cells'],
-            seed=seeds
+            seed=config['seeds'],
+            initial_mutation_freq=config['initial_mutation_freqs']
         )
 
 

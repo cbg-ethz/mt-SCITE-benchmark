@@ -7,7 +7,7 @@ rule run_merlin:
         mem_mb=4000,
         runtime=120
     params:
-        variant_matrix="../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/merlin_variant_matrix_{seed}.csv"
+        variant_matrix="../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/merlin_variant_matrix_{seed}.csv",
         total_matrix="../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/merlin_total_matrix_{seed}.csv"
 
     #conda:
