@@ -6,7 +6,7 @@ import numpy as np
 
 from functions import reparameterize_beta, simulate_mutation_freq_tree, simulate_read_counts
 
-def simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells, output_dir, seed=1):
+def simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells, output_dir, seed, initial_mutation_freq):
 
     # set seed
     np.random.seed(seed)
@@ -16,18 +16,21 @@ def simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells
         os.makedirs(output_dir)
 
     # Simulate the mutation frequency tree
-    tree = simulate_mutation_freq_tree(num_mutations, concentration)
+    tree = simulate_mutation_freq_tree(num_mutations, concentration, initial_mutation_freq=initial_mutation_freq)
     
     # Write the tree to a file using networkx
     tree_file = os.path.join(output_dir, f"tree_{seed}.gml")
     nx.write_gml(tree, tree_file)
     
     # Simulate the read counts
-    read_counts = simulate_read_counts(tree, error_rate, num_reads, num_cells)
+    read_counts, mutation_prob_matrix = simulate_read_counts(tree, error_rate, num_reads, num_cells)
     
     # Write the read counts to a text file using numpy.savetxt for efficiency
-    read_counts_file = os.path.join(output_dir, f"read_counts_{seed}.npy")
+    read_counts_file = os.path.join(output_dir, f"read_counts_{seed}_{initial_mutation_freq}.npy")
     np.save(read_counts_file, read_counts)
+
+    mutation_matrix_file = os.path.join(output_dir, f"mutation_prob_{seed}_{initial_mutation_freq}.npy")
+    np.save(mutation_prob_matrix_file, mutation_prob_matrix)
 
 
 if __name__ == "__main__":
@@ -40,7 +43,8 @@ if __name__ == "__main__":
     num_cells = int(sys.argv[5])
     output_dir = sys.argv[6]
     seed=int(sys.argv[7])
+    initial_mutation_freq = float(sys.argv[8])
 
     
     # Run the simulation
-    simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells, output_dir, seed)
+    simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells, output_dir, seed, initial_mutation_freq)

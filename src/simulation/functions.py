@@ -85,12 +85,14 @@ def simulate_read_counts(mutation_tree, error_rate, num_reads, num_cells):
 
     # init output tensor num_cells x num sites (or mutations) x 4
     read_counts = np.zeros((num_cells, n_mutations, 4), dtype=int)
+    mutation_probabilities = np.zeros((num_cells, n_mutations), dtype=float)
 
     for cell in range(num_cells):
 
         # pick cell attachment node at random
         attachment_node = np.random.randint(n_nodes)
         mutation_freqs_node = mutation_tree.nodes[attachment_node]['mutation_freq']
+        mutation_probabilities[cell, ] = mutation_freqs_node
         #print("attachment node")
         #print(attachment_node)
 
@@ -124,7 +126,7 @@ def simulate_read_counts(mutation_tree, error_rate, num_reads, num_cells):
 
             read_counts[cell, mutation_nr] = allele_counts
 
-    return read_counts
+    return [read_counts, mutation_probabilities]
 
 def transform_array_to_presence_absence_matrix(array):
     """

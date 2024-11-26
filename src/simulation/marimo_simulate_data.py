@@ -229,13 +229,16 @@ def __(np):
 
         # init output tensor num_cells x num sites (or mutations) x 4
         read_counts = np.zeros((num_cells, n_mutations, 4), dtype=int)
+        mutation_probabilities = np.zeros((num_cells, n_mutations), 
+                                          dtype=float)
 
         for cell in range(num_cells):
 
             # pick cell attachment node at random
             attachment_node = np.random.randint(n_nodes)
-            attachment_node = 2
             mutation_freqs_node = mutation_tree.nodes[attachment_node]['mutation_freq']
+            
+            mutation_probabilities[cell, ] = mutation_freqs_node
             #print("attachment node")
             #print(attachment_node)
 
@@ -268,14 +271,20 @@ def __(np):
 
                 read_counts[cell, mutation_nr] = allele_counts
 
-        return read_counts
+        return [read_counts, mutation_probabilities]
     return (simulate_read_counts,)
 
 
 @app.cell
 def __(mf_tree, simulate_read_counts):
-    dat = simulate_read_counts(mutation_tree=mf_tree, error_rate=0.0009, num_reads=500, num_cells=1)
-    return (dat,)
+    dat, mut_probs = simulate_read_counts(mutation_tree=mf_tree, error_rate=0.0009, num_reads=500, num_cells=10)
+    return dat, mut_probs
+
+
+@app.cell
+def __(dat):
+    dat
+    return
 
 
 @app.cell
@@ -323,7 +332,7 @@ def __(mo):
 @app.cell
 def __(np, nx, simulate_mutation_freq_tree):
     np.random.seed(1)
-    mf_tree = simulate_mutation_freq_tree(num_mutations=10, concentration=120)
+    mf_tree = simulate_mutation_freq_tree(num_mutations=50, concentration=120, initial_mutation_freq=0.01)
     mut_freq = nx.get_node_attributes(mf_tree, 'mutation_freq')
     mut_freq
     return mf_tree, mut_freq
