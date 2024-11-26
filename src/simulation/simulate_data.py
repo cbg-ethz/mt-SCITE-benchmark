@@ -19,17 +19,17 @@ def simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells
     tree = simulate_mutation_freq_tree(num_mutations, concentration, initial_mutation_freq=initial_mutation_freq)
     
     # Write the tree to a file using networkx
-    tree_file = os.path.join(output_dir, f"tree_{seed}_{initial_mutation_freq}.gml")
+    tree_file = os.path.join(output_dir, f"tree_{seed}.gml")
     nx.write_gml(tree, tree_file)
     
     # Simulate the read counts
     read_counts, mutation_prob_matrix = simulate_read_counts(tree, error_rate, num_reads, num_cells)
     
     # Write the read counts to a text file using numpy.savetxt for efficiency
-    read_counts_file = os.path.join(output_dir, f"read_counts_{seed}_{initial_mutation_freq}.npy")
+    read_counts_file = os.path.join(output_dir, f"read_counts_{seed}.npy")
     np.save(read_counts_file, read_counts)
 
-    mutation_matrix_file = os.path.join(output_dir, f"mutation_prob_{seed}_{initial_mutation_freq}.npy")
+    mutation_matrix_file = os.path.join(output_dir, f"mutation_prob_{seed}.npy")
     np.save(mutation_matrix_file, mutation_prob_matrix)
 
 

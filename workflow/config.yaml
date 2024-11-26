@@ -7,6 +7,7 @@ error_rate: [0.0005, 0.005, 0.05]
 num_reads: [500]
 num_cells: [100, 500]
 seed: range(1, 101)
+initial_mutation_freq: [0.01, 0.1]
 
 ## Paramter ranges for inference using mt-scite
 inf_error_rates: [0.0005, 0.005, 0.05]
