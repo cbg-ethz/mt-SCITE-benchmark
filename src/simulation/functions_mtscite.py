@@ -2,7 +2,7 @@
 ## functions to compute mutation probability matrix for mt-scite
 
 # import joanna's mutation probability calculation
-with open('../../software/mt-SCITE/Notebooks/mito/genotyping.py') as f:
+with open('../software/mt-SCITE/Notebooks/mito/genotyping.py') as f:
     exec(f.read())
 
 # functions that wrap the calculations, based on joanna's cell_prob(e_rate)
@@ -65,13 +65,18 @@ def compute_mutation_prob_matrix(read_count_list, reference, error_rate, prior_m
     # Initialize the mutation probability matrix using #CHR and POS columns from the first read_count DataFrame
     mutation_prob_matrix = read_count_list[0][['#CHR', 'POS']].copy()
 
-    # Compute mutation probabilities for each cell (col in mutation prob matrix) at each site (row)  
-    for i, read_count in enumerate(read_count_list):
-         
-         cell_mutation_probs = compute_mutation_prob_per_cell(read_count, reference, error_rate, prior_mutation_prob)
+    # Collect mutation probabilities for all cells
+    columns = [
+        compute_mutation_prob_per_cell(read_count, reference, error_rate, prior_mutation_prob)['Prob_mutation'].values
+        for read_count in read_count_list
+    ]
 
-         # Add the computed mutation probabilities as a new column in the matrix
-         mutation_prob_matrix[f'Cell_{i+1}'] = cell_mutation_probs['Prob_mutation'].values
+    # Add all collected columns at once to the mutation_prob_matrix
+    mutation_prob_matrix = pd.concat(
+        [mutation_prob_matrix, pd.DataFrame(columns).T.rename(columns=lambda x: f'Cell_{x+1}')],
+        axis=1
+    )
+
 
     return mutation_prob_matrix
 
