@@ -30,7 +30,7 @@ def simulate_data(num_mutations, concentration, error_rate, num_reads, num_cells
     np.save(read_counts_file, read_counts)
 
     mutation_matrix_file = os.path.join(output_dir, f"mutation_prob_{seed}_{initial_mutation_freq}.npy")
-    np.save(mutation_prob_matrix_file, mutation_prob_matrix)
+    np.save(mutation_matrix_file, mutation_prob_matrix)
 
 
 if __name__ == "__main__":
