@@ -1,8 +1,8 @@
 rule generate_mutation_probability_matrices_for_fixed_error_rate:
     input:
-        "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/read_counts_{seed}.npy"
+        "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/read_counts_{seed}.npy"
     output:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/mt_scite_mutation_prob_{inf_error_rate}_{seed}.txt"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/mt_scite_mutation_prob_{inf_error_rate}_{seed}.txt"
     params:
         error_rate = "{inf_error_rate}"
         
@@ -11,10 +11,10 @@ rule generate_mutation_probability_matrices_for_fixed_error_rate:
 
 rule estimate_tree_given_mutation_probability_matrix:
     input:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/mt_scite_mutation_prob_{inf_error_rate}_{seed}.txt"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/mt_scite_mutation_prob_{inf_error_rate}_{seed}.txt"
         
     output:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/mt_scite_mutation_prob_{inf_error_rate}_{seed}_map0.newick"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/mt_scite_mutation_prob_{inf_error_rate}_{seed}_map0.newick"
 
     shell:"""./../software/mt-SCITE/mtscite -n {wildcards.num_mutations} -m {wildcards.num_cells} -r 1 -l 1000000 -fd 0.0001 -ad 0.0001 -s -max_treelist_size 1  -i {input}"""
 
@@ -26,13 +26,13 @@ rule estimate_tree_given_mutation_probability_matrix:
 
 rule generate_mutation_probability_matrices_for_range_of_error_rates:
     input:
-        "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/read_counts_{seed}.npy"
+        "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/read_counts_{seed}.npy"
 
     output:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/mutation_probs.done"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/mutation_probs.done"
     params:
-        input_dir = "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/",
-        output_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/"
+        input_dir = "../results/simulated_data/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/",
+        output_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/"
         
         
     shell:
@@ -43,12 +43,12 @@ rule generate_mutation_probability_matrices_for_range_of_error_rates:
 
 rule perform_kcval_to_learn_error:
     input:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/mutation_probs.done"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/mutation_probs.done"
     output:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}/val_scores.txt"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt"
 
     params:
-        input_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}/seed_{seed}"
+        input_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}"
 
     shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir}"""
         
