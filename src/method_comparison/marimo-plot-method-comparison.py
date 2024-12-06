@@ -486,9 +486,9 @@ def __():
 
 @app.cell
 def __(os):
-    true_error_rate = 0.005
+    true_error_rate = 0.0005
     inferrered_error_rates = [0.05, 0.005, 0.0005]
-    condition = f"10_120_{true_error_rate}_500_500_0.1"
+    condition = f"50_120_{true_error_rate}_500_500_0.1"
 
     # Define file path templates for ground truth trees
     simulation_output_dir = "../../results/simulated_data/"
@@ -660,13 +660,14 @@ def __(
 
 
 @app.cell
-def __():
+def __(df):
+    df
     return
 
 
 @app.cell
 def __():
-    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual
+    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual, theme_bw, theme
     return (
         aes,
         geom_bar,
@@ -676,6 +677,7 @@ def __():
         position_dodge,
         scale_fill_manual,
         theme,
+        theme_bw,
     )
 
 
@@ -690,6 +692,8 @@ def __(
     labs,
     position_dodge,
     scale_fill_manual,
+    theme,
+    theme_bw,
 ):
     plot_2 = (
         ggplot(df, aes(x="Method", y="Avg_Distance", 
@@ -703,15 +707,19 @@ def __(
 
         labs(
             x="Method",
-            y="Average Parent-Child Distance",
+            y="Normalised Parent-Child Distance",
             fill="Fixed Error rates"
         )
-        + scale_fill_manual(values=["#999999", "#56B4E9", "#E69F00", "#009E73"])
+        + scale_fill_manual(values=["#ffd700",
+    "#ffb14e",
+    "#fa8775"])+
+        theme_bw()+
+        theme(legend_position= "top")
 
 
     )
     plot_2.show()
-    plot_2.save(f"../../results/plots/{condition}_fixedErrors_tree_topology_comparison.png", width=10, height=6, dpi=300)
+    plot_2.save(f"../../results/plots/{condition}_fixedErrors_tree_topology_comparison.png", width=5, height=5, dpi=300)
     return (plot_2,)
 
 
@@ -722,7 +730,8 @@ def __(condition):
 
 
 @app.cell
-def __():
+def __(avg_distances):
+    avg_distances
     return
 
 
