@@ -79,7 +79,7 @@ def __(create_merlin_mutation_dict, nx, os, path_to_condition):
     # import merlin tree
     merlin_graph = nx.read_edgelist(os.path.join(path_to_condition, "merlin_1_clone_tree_edge_list.txt"), 
                                    create_using = nx.DiGraph, delimiter=", ")
-    mutation_dict_merlin = create_merlin_mutation_dict(10)
+    mutation_dict_merlin = create_merlin_mutation_dict(50)
     merlin_graph = nx.relabel_nodes(merlin_graph, mapping=mutation_dict_merlin)
     #print(mutation_dict_merlin)
     print(merlin_graph.edges)
@@ -229,7 +229,7 @@ def __():
 @app.cell
 def __(create_scite_mutation_dict, mt_scite_tree, nx, tree_to_networkx):
     mt_scite_graph = tree_to_networkx(mt_scite_tree)
-    mt_scite_dict = create_scite_mutation_dict(10)
+    mt_scite_dict = create_scite_mutation_dict(50)
     mt_scite_graph = nx.relabel_nodes(mt_scite_graph, mt_scite_dict)
     return mt_scite_dict, mt_scite_graph
 
@@ -297,12 +297,29 @@ def __():
         distance = len(symmetric_difference)
         return distance
 
+    def compute_normalised_parent_child_distance(E1, E2):
+
+        symmetric_difference = compute_parent_child_distance(E1, E2)
+
+        maximum_possible_distance = len(E1) * 2
+
+        normalised_distance = symmetric_difference / maximum_possible_distance
+
+        return normalised_distance
+
+
     ## Example
     e1 = [('0', '1'), ('0', '2'), ('1', '3')]
     e2 = [('0', '1'), ('0', '2'), ('2', '3')]
     print(compute_parent_child_distance(e1, e2))
+    print(compute_normalised_parent_child_distance(e1, e2))
     print(set(e1).symmetric_difference(set(e2)))
-    return compute_parent_child_distance, e1, e2
+    return (
+        compute_normalised_parent_child_distance,
+        compute_parent_child_distance,
+        e1,
+        e2,
+    )
 
 
 @app.cell
@@ -363,7 +380,7 @@ def __():
 @app.cell
 def __(
     Phylo,
-    compute_parent_child_distance,
+    compute_normalised_parent_child_distance,
     create_merlin_mutation_dict,
     create_scite_mutation_dict,
     mutation_dict_merlin,
@@ -441,7 +458,7 @@ def __(
             for true_tree in true_trees:
                 # Compute distance to each inferred tree for each true tree
                 for inferred_tree in inferred_trees:
-                    distance = compute_parent_child_distance(true_tree.edges, inferred_tree.edges)  # Assuming this function is defined
+                    distance = compute_normalised_parent_child_distance(true_tree.edges, inferred_tree.edges)  
                     distances.append(distance)
             # Calculate average distance for this method
             avg_distances.append(np.mean(distances))
@@ -458,8 +475,7 @@ def __(
 
 
 @app.cell
-def __(path_to_condition):
-    path_to_condition
+def __():
     return
 
 
@@ -571,8 +587,8 @@ def __(scite_trees):
 
 
 @app.cell
-def __(merlin_trees, true_trees):
-    list(set(merlin_trees[0].edges) & set(true_trees[0].edges))
+def __():
+    #list(set(merlin_trees[0].edges) & set(true_trees[0].edges))
     return
 
 
