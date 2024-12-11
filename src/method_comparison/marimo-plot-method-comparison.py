@@ -52,19 +52,26 @@ def __(mo):
 
 
 @app.cell
-def __(condition, nx, os, plt):
+def __(nx, os, plt):
     path_to_truth = "../../results/simulated_data/"
-    true_tree_file = os.path.join(path_to_truth, condition, "tree_1.gml")
+    example_condition = "10_120_0.0005_500_500_0.01"
+    path_to_condition = os.path.join(path_to_truth, example_condition)
+    true_tree_file = os.path.join(path_to_truth, example_condition, "tree_1.gml")
     true_tree = nx.read_gml(true_tree_file)
     print(true_tree)
     nx.draw_networkx(true_tree, pos=nx.shell_layout(true_tree))
     plt.show()
-    return path_to_truth, true_tree, true_tree_file
+    return (
+        example_condition,
+        path_to_condition,
+        path_to_truth,
+        true_tree,
+        true_tree_file,
+    )
 
 
 @app.cell
-def __(true_tree):
-    print(true_tree.edges)
+def __():
     return
 
 
@@ -75,32 +82,27 @@ def __(mo):
 
 
 @app.cell
-def __(create_merlin_mutation_dict, nx, os, path_to_condition):
+def __():
     # import merlin tree
-    merlin_graph = nx.read_edgelist(os.path.join(path_to_condition, "merlin_1_clone_tree_edge_list.txt"), 
-                                   create_using = nx.DiGraph, delimiter=", ")
-    mutation_dict_merlin = create_merlin_mutation_dict(50)
-    merlin_graph = nx.relabel_nodes(merlin_graph, mapping=mutation_dict_merlin)
+    #merlin_graph = nx.read_edgelist(os.path.join(path_to_condition, "merlin_1_clone_tree_edge_list.txt"), 
+    #                               create_using = nx.DiGraph, delimiter=", ")
+    #mutation_dict_merlin = create_merlin_mutation_dict(50)
+    #merlin_graph = nx.relabel_nodes(merlin_graph, mapping=mutation_dict_merlin)
     #print(mutation_dict_merlin)
-    print(merlin_graph.edges)
-    return merlin_graph, mutation_dict_merlin
+    #print(merlin_graph.edges)
+    return
 
 
 @app.cell
-def __(merlin_graph, nx, plt):
-    nx.draw_networkx(merlin_graph, pos=nx.shell_layout(merlin_graph))
-    plt.show()
+def __():
+    #nx.draw_networkx(merlin_graph, pos=nx.shell_layout(merlin_graph))
+    #plt.show()
     return
 
 
 @app.cell
 def __(mo):
     mo.md(r"""## mt scite tree""")
-    return
-
-
-@app.cell
-def __():
     return
 
 
@@ -213,12 +215,12 @@ def __(Optional, Phylo, nx):
 
 
 @app.cell
-def __(Phylo, os, path_to_condition):
+def __():
     # import mt scite tree
-    mt_scite_tree = Phylo.read(os.path.join(path_to_condition, "mt_scite_mutation_prob_0.0005_1_map0.newick"), format="newick", rooted=True)
-    Phylo.draw(mt_scite_tree)
-    print(mt_scite_tree)
-    return (mt_scite_tree,)
+    #mt_scite_tree = Phylo.read(os.path.join(path_to_condition, "mt_scite_mutation_prob_0.0005_1_map0.newick"), format="newick", rooted=True)
+    #Phylo.draw(mt_scite_tree)
+    #print(mt_scite_tree)
+    return
 
 
 @app.cell
@@ -227,17 +229,17 @@ def __():
 
 
 @app.cell
-def __(create_scite_mutation_dict, mt_scite_tree, nx, tree_to_networkx):
-    mt_scite_graph = tree_to_networkx(mt_scite_tree)
-    mt_scite_dict = create_scite_mutation_dict(50)
-    mt_scite_graph = nx.relabel_nodes(mt_scite_graph, mt_scite_dict)
-    return mt_scite_dict, mt_scite_graph
+def __():
+    #mt_scite_graph = tree_to_networkx(mt_scite_tree)
+    #mt_scite_dict = create_scite_mutation_dict(50)
+    #mt_scite_graph = nx.relabel_nodes(mt_scite_graph, mt_scite_dict)
+    return
 
 
 @app.cell
-def __(mt_scite_graph, nx, plt):
-    nx.draw(mt_scite_graph, with_labels=True)
-    plt.show()
+def __():
+    #nx.draw(mt_scite_graph, with_labels=True)
+    #plt.show()
     return
 
 
@@ -248,25 +250,25 @@ def __(mo):
 
 
 @app.cell
-def __(Phylo, os, path_to_condition):
-    scite_tree = Phylo.read(os.path.join(path_to_condition, "scite_0.005_1_ml0.newick"), format="newick", rooted=True)
-    Phylo.draw(scite_tree)
-    print(scite_tree)
-    return (scite_tree,)
+def __():
+    #cite_tree = Phylo.read(os.path.join(path_to_condition, "scite_0.005_1_ml0.newick"), format="newick", rooted=True)
+    #Phylo.draw(scite_tree)
+    #print(scite_tree)
+    return
 
 
 @app.cell
-def __(create_scite_mutation_dict, nx, scite_tree, tree_to_networkx):
-    scite_graph = tree_to_networkx(scite_tree)
-    scite_dict = create_scite_mutation_dict(10)
-    scite_graph = nx.relabel_nodes(scite_graph, scite_dict)
-    return scite_dict, scite_graph
+def __():
+    #scite_graph = tree_to_networkx(scite_tree)
+    #scite_dict = create_scite_mutation_dict(10)
+    #scite_graph = nx.relabel_nodes(scite_graph, scite_dict)
+    return
 
 
 @app.cell
-def __(nx, plt, scite_graph):
-    nx.draw_networkx(scite_graph)
-    plt.show()
+def __():
+    #nx.draw_networkx(scite_graph)
+    #plt.show()
     return
 
 
@@ -277,9 +279,9 @@ def __(mo):
 
 
 @app.cell
-def __(scite_graph, true_tree):
-    print(true_tree.edges)
-    print(scite_graph.edges)
+def __():
+    #print(true_tree.edges)
+    #print(scite_graph.edges)
     return
 
 
@@ -323,31 +325,23 @@ def __():
 
 
 @app.cell
-def __(compute_parent_child_distance, merlin_graph, true_tree):
-    compute_parent_child_distance(true_tree.edges, merlin_graph.edges)
+def __():
     return
 
 
 @app.cell
-def __(compute_parent_child_distance, mt_scite_graph, true_tree):
-    compute_parent_child_distance(true_tree.edges, mt_scite_graph.edges)
+def __():
     return
 
 
 @app.cell
-def __(compute_parent_child_distance, scite_graph, true_tree):
-    compute_parent_child_distance(true_tree.edges, scite_graph.edges)
+def __():
     return
 
 
 @app.cell
 def __(mo):
-    mo.md(
-        r"""
-        However, the trees are not yet matched!!
-
-        """
-    )
+    mo.md(r"""However, the trees are not yet matched!!""")
     return
 
 
@@ -383,7 +377,6 @@ def __(
     compute_normalised_parent_child_distance,
     create_merlin_mutation_dict,
     create_scite_mutation_dict,
-    mutation_dict_merlin,
     np,
     nx,
     tree_to_networkx,
@@ -396,7 +389,7 @@ def __(
                                         delimiter=", ")
 
         # Remap node labels such that they are the same as in the true tree
-        mutation_dict = create_merlin_mutation_dict(num_mutations)
+        mutation_dict_merlin = create_merlin_mutation_dict(num_mutations)
         merlin_graph = nx.relabel_nodes(merlin_graph, mapping=mutation_dict_merlin, copy=False)
 
         return merlin_graph  
@@ -453,16 +446,38 @@ def __(
         avg_distances = []
         sd_distances = []
 
+        n_replicates = len(true_trees)
+
+        #for i in range(0, n_replicates):
+        #    print(i)
+        #    distance = compute_normalised_parent_child_distance(true_trees[i].edges, inferred_trees_list[i].edges)
+        #    distances.append(distance)
+
+        # For each inference method
         for inferred_trees in inferred_trees_list:
             distances = []
-            for true_tree in true_trees:
-                # Compute distance to each inferred tree for each true tree
-                for inferred_tree in inferred_trees:
-                    distance = compute_normalised_parent_child_distance(true_tree.edges, inferred_tree.edges)  
-                    distances.append(distance)
-            # Calculate average distance for this method
+            #Estimate the distances to the true trees.
+            for i in range(0, 10):
+                true_tree = true_trees[i]
+                inferred_tree = inferred_trees[i]
+                
+                distance = compute_normalised_parent_child_distance(true_tree.edges, inferred_tree.edges) 
+                #print(distance)
+                distances.append(distance)
+
             avg_distances.append(np.mean(distances))
             sd_distances.append(np.std(distances))
+            
+            #for true_tree in true_trees:
+                # Compute distance to each inferred tree for each true tree
+            #    for inferred_tree in inferred_trees:
+            #        distance = compute_normalised_parent_child_distance(true_tree.edges, inferred_tree.edges) 
+            #        print(distance)
+            #        distances.append(distance)
+            # Calculate average distance for this method
+        #avg_distances.append(np.mean(distances))
+        #sd_distances.append(np.std(distances))
+        
         return [avg_distances, sd_distances]
     return (
         compute_average_distances,
@@ -475,201 +490,146 @@ def __(
 
 
 @app.cell
-def __():
-    return
-
-
-@app.cell
-def __():
-    return
-
-
-@app.cell
-def __(os):
-    true_error_rate = 0.0005
-    inferrered_error_rates = [0.05, 0.005, 0.0005]
-    condition = f"50_120_{true_error_rate}_500_500_0.1"
-
-    # Define file path templates for ground truth trees
-    simulation_output_dir = "../../results/simulated_data/"
-    path_to_true_trees = os.path.join(simulation_output_dir, condition)
-    true_path_template = os.path.join(path_to_true_trees, "tree_[seed].gml")
-
-    # Define file path templates for each method
-    dat_dir = "../../results/inference_output/"
-    path_to_condition = os.path.join(dat_dir, condition)
-
-    scite_path_template = os.path.join(path_to_condition, f"scite_{true_error_rate}_[seed]_ml0.newick")
-
-    mtscite_path_template_0 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferrered_error_rates[0]}_[seed]_map0.newick")
-
-    mtscite_path_template_1 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferrered_error_rates[1]}_[seed]_map0.newick")
-
-    mtscite_path_template_2 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferrered_error_rates[2]}_[seed]_map0.newick")
-
-    merlin_path_template = os.path.join(path_to_condition, "merlin_[seed]_clone_tree_edge_list.txt")
-    return (
-        condition,
-        dat_dir,
-        inferrered_error_rates,
-        merlin_path_template,
-        mtscite_path_template_0,
-        mtscite_path_template_1,
-        mtscite_path_template_2,
-        path_to_condition,
-        path_to_true_trees,
-        scite_path_template,
-        simulation_output_dir,
-        true_error_rate,
-        true_path_template,
-    )
-
-
-@app.cell
-def __(true_path_template, true_trees):
-    true_path_template
+def __(true_trees):
     true_trees
     return
 
 
 @app.cell
-def __(
-    load_trees,
-    merlin_path_template,
-    mtscite_path_template_0,
-    mtscite_path_template_1,
-    mtscite_path_template_2,
-    scite_path_template,
-    true_path_template,
-):
-    # Load trees for each method using the generalized function
-    seed_range = range(1, 11)
-    scite_trees = load_trees(scite_path_template, seed_range, "scite")
-    mtscite_trees_0 = load_trees(mtscite_path_template_0, seed_range, "mtscite")
-    mtscite_trees_1 = load_trees(mtscite_path_template_1, seed_range, "mtscite")
-    mtscite_trees_2 = load_trees(mtscite_path_template_2, seed_range, "mtscite")
-    true_trees = load_trees(true_path_template, seed_range, "true")
-    merlin_trees = load_trees(merlin_path_template, seed_range, "merlin")
+def __():
+    return
+
+
+@app.cell
+def __(path_to_condition):
+    path_to_condition
+    return
+
+
+@app.cell
+def __(load_trees, os):
+    def get_true_trees(true_error_rate=0.05, condition="10_120_0.05_500_500_0.1"):
+
+        #condition = f"10_120_{true_error_rate}_500_500_0.1"
+
+        # Define file path templates for ground truth trees
+        simulation_output_dir = "../../results/simulated_data/"
+        path_to_true_trees = os.path.join(simulation_output_dir, condition)
+        true_path_template = os.path.join(path_to_true_trees, "tree_[seed].gml")
+
+        seed_range = range(1, 11)
+        true_trees = load_trees(true_path_template, seed_range, "true")
+
+        return true_trees
+        
+    def get_inferred_trees(true_error_rate=0.05, condition="10_120_0.05_500_500_0.1", inferred_error_rates=[0.05, 0.005, 0.0005]):
+
+        
+        # Define file path templates for ground truth trees
+        simulation_output_dir = "../../results/simulated_data/"
+        
+        
+        # Define file path templates for each method
+        dat_dir = "../../results/inference_output/"
+        path_to_condition = os.path.join(dat_dir, condition)
+        
+        scite_path_template_0 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[0]}_[seed]_ml0.newick")
+        scite_path_template_1 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[1]}_[seed]_ml0.newick")
+        scite_path_template_2 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[2]}_[seed]_ml0.newick")
+        
+        
+        mtscite_path_template_0 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[0]}_[seed]_map0.newick")
+        
+        mtscite_path_template_1 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[1]}_[seed]_map0.newick")
+        
+        mtscite_path_template_2 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[2]}_[seed]_map0.newick")
+        
+        merlin_path_template = os.path.join(path_to_condition, "merlin_[seed]_clone_tree_edge_list.txt")
+        
+        # Load trees for each method using the generalized function
+        seed_range = range(1, 11)
+        scite_trees_0 = load_trees(scite_path_template_0, seed_range, "scite")
+        scite_trees_1 = load_trees(scite_path_template_1, seed_range, "scite")
+        scite_trees_2 = load_trees(scite_path_template_2, seed_range, "scite")
+        
+        mtscite_trees_0 = load_trees(mtscite_path_template_0, seed_range, "mtscite")
+        mtscite_trees_1 = load_trees(mtscite_path_template_1, seed_range, "mtscite")
+        mtscite_trees_2 = load_trees(mtscite_path_template_2, seed_range, "mtscite")
+        merlin_trees = load_trees(merlin_path_template, seed_range, "merlin")
+        
+        inferred_trees_list = [merlin_trees, scite_trees_0, scite_trees_1, scite_trees_2, mtscite_trees_0, mtscite_trees_1, mtscite_trees_2]
+        method_names = ['Merlin', 'SCITE', 'SCITE', 'SCITE', 'mtSCITE', 'mtSCITE', 'mtSCITE']
+
+        return inferred_trees_list, method_names
+        
+
+    return get_inferred_trees, get_true_trees
+
+
+@app.cell
+def __(compute_average_distances, get_inferred_trees, get_true_trees, pd):
+
+    true_error_rates = [0.05, 0.005, 0.0005]
+    inferred_error_rates = [0.05, 0.005, 0.0005]
+    error_rates = ["None"] +  inferred_error_rates + inferred_error_rates
+    dfs = []
+
+    for true_error_rate in true_error_rates:
+
+        condition = f"10_120_{true_error_rate}_500_500_0.01"
+
+        true_trees = get_true_trees(true_error_rate, condition)
+        print(f"Compiled data for true error rate {true_error_rate}")
+        inferred_trees_list, method_names = get_inferred_trees(true_error_rate, condition)
+
+
+        avg_distances, sd_distances = compute_average_distances(true_trees, inferred_trees_list)
+
+        data = {
+            "Method":method_names,
+            "Error_Rate": error_rates,
+            "Avg_Distance": avg_distances,
+            "Sd_Distance": sd_distances,
+            "True_Error_Rate": true_error_rate
+        }
+        df = pd.DataFrame(data)
+        dfs.append(df)
+
+    combined_df = pd.concat(dfs, ignore_index=True)
     return (
-        merlin_trees,
-        mtscite_trees_0,
-        mtscite_trees_1,
-        mtscite_trees_2,
-        scite_trees,
-        seed_range,
+        avg_distances,
+        combined_df,
+        condition,
+        data,
+        df,
+        dfs,
+        error_rates,
+        inferred_error_rates,
+        inferred_trees_list,
+        method_names,
+        sd_distances,
+        true_error_rate,
+        true_error_rates,
         true_trees,
     )
 
 
 @app.cell
-def __(merlin_trees):
-    merlin_trees[0].edges
-
-    return
-
-
-@app.cell
-def __(true_trees):
-    true_trees[0].edges
-    return
-
-
-@app.cell
-def __(mtscite_trees_0):
-    mtscite_trees_0[0].edges
-    return
-
-
-@app.cell
-def __(scite_trees):
-    scite_trees[0].edges
+def __():
     return
 
 
 @app.cell
 def __():
-    #list(set(merlin_trees[0].edges) & set(true_trees[0].edges))
-    return
-
-
-@app.cell
-def __(compute_parent_child_distance, merlin_trees, true_trees):
-    compute_parent_child_distance(merlin_trees[0].edges, true_trees[0].edges)
-    return
-
-
-@app.cell
-def __(merlin_trees, nx, plt):
-    nx.draw_networkx(merlin_trees[0])
-    plt.show()
-    return
-
-
-@app.cell
-def __(nx, plt, true_trees):
-    nx.draw_networkx(true_trees[0])
-    plt.show()
-    return
-
-
-@app.cell
-def __(
-    compute_average_distances,
-    inferrered_error_rates,
-    merlin_trees,
-    mtscite_trees_0,
-    mtscite_trees_1,
-    mtscite_trees_2,
-    np,
-    pd,
-    scite_trees,
-    true_error_rate,
-    true_trees,
-):
-    # Assume true_trees, merlin_trees, scite_trees, and mtscite_trees are available
-    # inferred_trees_list contains trees from each method
-    #merlin_trees = [merlin_graph]
-    #scite_trees = [scite_graph]
-    #mtscite_trees = [mt_scite_graph]
-    #true_trees = [true_tree]
-
-    inferred_trees_list = [merlin_trees, scite_trees, mtscite_trees_0, mtscite_trees_1, mtscite_trees_2]
-    method_names = ['Merlin', 'SCITE', 'mtSCITE', 'mtSCITE', 'mtSCITE']
-
-    error_rates = [np.nan, true_error_rate] +  inferrered_error_rates
-
-    # Step 2: Calculate average distances for each method
-    avg_distances, sd_distances = compute_average_distances(true_trees, inferred_trees_list)
-
-    data = {
-        "Method":method_names,
-        "Error_Rate": error_rates,
-        "Avg_Distance": avg_distances,
-        "Sd_Distance": sd_distances
-    }
-    df = pd.DataFrame(data)
-    return (
-        avg_distances,
-        data,
-        df,
-        error_rates,
-        inferred_trees_list,
-        method_names,
-        sd_distances,
-    )
-
-
-@app.cell
-def __(df):
-    df
     return
 
 
 @app.cell
 def __():
-    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual, theme_bw, theme
+    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual, theme_bw, theme, facet_wrap
     return (
         aes,
+        facet_wrap,
         geom_bar,
         geom_errorbar,
         ggplot,
@@ -684,8 +644,9 @@ def __():
 @app.cell
 def __(
     aes,
+    combined_df,
     condition,
-    df,
+    facet_wrap,
     geom_bar,
     geom_errorbar,
     ggplot,
@@ -695,12 +656,13 @@ def __(
     theme,
     theme_bw,
 ):
+
     plot_2 = (
-        ggplot(df, aes(x="Method", y="Avg_Distance", 
+        ggplot(combined_df, aes(x="Method", y="Avg_Distance", 
                        fill= "factor(Error_Rate)",
                        group= "factor(Error_Rate)"))+
         geom_bar(stat = "identity", width=0.7, position = position_dodge(0.7))+
-
+        facet_wrap('~True_Error_Rate')+
         geom_errorbar(aes(ymin="Avg_Distance - 0.5 * Sd_Distance",
                           ymax="Avg_Distance + 0.5 * Sd_Distance"), 
                       width=0.2, position=position_dodge(0.7))+
@@ -719,19 +681,17 @@ def __(
 
     )
     plot_2.show()
-    plot_2.save(f"../../results/plots/{condition}_fixedErrors_tree_topology_comparison.png", width=5, height=5, dpi=300)
+    plot_2.save(f"../../results/plots/{condition}_combined_fixedErrors_tree_topology_comparison.png", width=15, height=10, dpi=300)
     return (plot_2,)
 
 
 @app.cell
-def __(condition):
-    condition
+def __():
     return
 
 
 @app.cell
-def __(avg_distances):
-    avg_distances
+def __():
     return
 
 

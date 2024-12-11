@@ -27,8 +27,8 @@ def __(mo):
 
 @app.cell
 def __():
-    input_dir = "../../results/simulated_data/50_120_0.005_500_100/"
-    output_dir = "../../results/inference_output/50_120_0.005_500_100/"
+    input_dir = "../../results/simulated_data/10_120_0.005_500_100/"
+    output_dir = "../../results/inference_output/10_120_0.005_500_100/"
     #to be defined:
     # input files for seed 1 10
     #for seed_nr in range(1, 11):
@@ -144,7 +144,16 @@ def __(np):
             #e2 = [('0', '1'), ('0', '2'), ('2', '3')]
             #print(compute_parent_child_distance(e1, e2))
             #print(set(e1).symmetric_difference(set(e2)))
-            return compute_parent_child_distance
+            #return compute_parent_child_distance
+    def compute_normalised_parent_child_distance(E1, E2):
+
+        symmetric_difference = compute_parent_child_distance(E1, E2)
+
+        maximum_possible_distance = len(E1) * 2
+
+        normalised_distance = symmetric_difference / maximum_possible_distance
+
+        return normalised_distance
 
 
     def compute_average_distances(true_trees, inferred_trees_list):
@@ -152,16 +161,31 @@ def __(np):
             avg_distances = []
             sd_distances = []
 
+            # For each inference method
             for inferred_trees in inferred_trees_list:
                 distances = []
-                for true_tree in true_trees:
-                    # Compute distance to each inferred tree for each true tree
-                    for inferred_tree in inferred_trees:
-                        distance = compute_parent_child_distance(true_tree.edges, inferred_tree.edges)  # Assuming this function is defined
-                        distances.append(distance)
-                # Calculate average distance for this method
+                #Estimate the distances to the true trees.
+                for i in range(0, 10):
+                    true_tree = true_trees[i]
+                    inferred_tree = inferred_trees[i]
+                    
+                    distance = compute_normalised_parent_child_distance(true_tree.edges, 
+                                                                        inferred_tree.edges) 
+                    #print(distance)
+                    distances.append(distance)
+        
                 avg_distances.append(np.mean(distances))
                 sd_distances.append(np.std(distances))
+            #for inferred_trees in inferred_trees_list:
+            #distances = []
+            #    for true_tree in true_trees:
+                    # Compute distance to each inferred tree for each true tree
+            #        for inferred_tree in inferred_trees:
+            #            distance = compute_parent_child_distance(true_tree.edges, inferred_tree.edges)  # Assuming this function is defined
+            #            distances.append(distance)
+            #    # Calculate average distance for this method
+            #    avg_distances.append(np.mean(distances))
+            #    sd_distances.append(np.std(distances))
             return [avg_distances, sd_distances]
 
 
@@ -173,7 +197,7 @@ def __(np):
 
     def generate_error_rates(true_error_rate):
         """Generate 20 error rates spaced logarithmically between min and max."""
-        error_rate_min = true_error_rate / 100
+        error_rate_min = true_error_rate / 10
         error_rate_max = true_error_rate * 10
         error_rates = np.round(
             np.logspace(np.log10(error_rate_min), np.log10(error_rate_max), num=20),
@@ -182,6 +206,7 @@ def __(np):
         return error_rates
     return (
         compute_average_distances,
+        compute_normalised_parent_child_distance,
         compute_parent_child_distance,
         create_scite_mutation_dict,
         generate_error_rates,
@@ -203,8 +228,8 @@ def __(mo):
 @app.cell
 def __(nx, os, plt):
     path_to_truth = "../../results/simulated_data/"
-    true_error_rate = 0.05
-    condition = f"50_120_{true_error_rate}_500_500"
+    true_error_rate = 0.005
+    condition = f"10_120_{true_error_rate}_500_500_0.1"
     true_tree_file = os.path.join(path_to_truth, condition, "tree_1.gml")
     true_tree = nx.read_gml(true_tree_file)
     print(true_tree)
@@ -249,7 +274,7 @@ def __(nx, plt, tree):
 
 @app.cell
 def __(
-    compute_parent_child_distance,
+    compute_normalised_parent_child_distance,
     get_tree_from_gv,
     inf_error_rates,
     inferred_trees_dir,
@@ -263,7 +288,7 @@ def __(
 
     for inf_error_rate in inf_error_rates:
 
-        formatted_error_rate = f"{inf_error_rate:.6f}"
+        formatted_error_rate = f"{inf_error_rate:8f}"
 
         template_inf_rate = template.replace("[inferred_error_rate]", str(formatted_error_rate))
         distances = []
@@ -275,7 +300,7 @@ def __(
             tree_file = os.path.join(inferred_trees_dir, template_fully_specified)
 
             tree = get_tree_from_gv(tree_file)
-            distance = compute_parent_child_distance(tree.edges(data=False), true_tree.edges)
+            distance = compute_normalised_parent_child_distance(tree.edges(data=False), true_tree.edges)
             distances.append(distance)
 
         avg_distances.append(np.mean(distances))
@@ -324,7 +349,7 @@ def __(
     # Customize plot
     plt.xscale('log')  # Use logarithmic scale for error rates
     plt.xlabel('Log Error Rates')
-    plt.ylabel('Mean Parent-Child Distance')
+    plt.ylabel('Normalised Parent-Child Distance')
     plt.axvline(true_error_rate, color='green', linestyle='--', label='True error rate')
 
     #plt.title('Mean Distances with Error Bars')
@@ -353,12 +378,7 @@ def __(mo):
 
 @app.cell
 def __(mo):
-    mo.md(
-        r"""
-        Normalise by score on a star tree
-
-        """
-    )
+    mo.md(r"""Normalise by score on a star tree""")
     return
 
 
@@ -388,7 +408,7 @@ def __(nx, plt, star_tree):
 
 @app.cell
 def __():
-    # test that scite can read the tree
+    # test that scite can read the tree DONE
     # test that scite reads the tree correctly, i.e. that it interprets the node labels as correct mutations numbers
     # run mt scite with new normalisatoin
     return
