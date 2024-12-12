@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.9.14"
+__generated_with = "0.8.3"
 app = marimo.App(width="medium")
 
 
@@ -46,7 +46,6 @@ def __():
         str: Formatted error rate.
         """
         return f"{error_rate:.10f}".rstrip('0').rstrip('.')  # Remove trailing zeros and decimal point if unnecessary
-
     return compute_normalized_likelihood, format_best_error_rate
 
 
@@ -69,16 +68,28 @@ def __():
     )
 
 
-app._unparsable_cell(
-    r"""
+@app.cell
+def __(
+    compute_normalized_likelihood,
+    epsilon,
+    initial_mut_freq,
+    n_cells,
+    n_mutations,
+    np,
+    os,
+    pd,
+    seed,
+    shutil,
+    true_error_rate,
+):
     # File paths
     file_name = os.path.join(
-            f\"../../results/inference_output/\"
-            f\"{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/val_scores.txt\"
+            f"../../results/inference_output/"
+            f"{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/val_scores.txt"
         )
     file_name_2 = os.path.join(
-            f\"../../results/inference_output/\"
-            f\"{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/val_scores_star_trees.txt\"
+            f"../../results/inference_output/"
+            f"{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/val_scores_star_trees.txt"
         )
 
     print(file_name)
@@ -95,30 +106,39 @@ app._unparsable_cell(
     sd_log_lik = np.std(normalised_dat.iloc[1:31, 1:], axis=0)
 
     # Find the best error rate
-    max_log_lik = np.max(mean_log_lik)
-    best_error_rate = error_rate[np.argmax(mean_log_lik)]
+    max_log_lik_index = np.argmax(mean_log_lik)
+    max_log_lik = mean_log_lik.iloc[max_log_lik_index]
+    best_error_rate = error_rate[max_log_lik_index]
+    sd_max_lik = sd_log_lik.iloc[max_log_lik_index]
 
-    ```
 
     # Output the result
-    best_tree_file = f\"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/learned_{best_error_rate}_0_map0.gv\"
+    best_tree_file = f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/learned_{best_error_rate}_0_map0.gv"
 
-    new_tree_file =f\"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/best_learned_tree_{best_error_rate}_0_map0.gv\"
+    new_tree_file =f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/best_learned_tree_{best_error_rate}_0_map0.gv"
 
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):
             shutil.copy(best_tree_file, new_tree_file)
-            print(f\"Copied best tree file to {new_tree_file}\")
+            print(f"Copied best tree file to {new_tree_file}")
     else:
-            print(f\"Best tree file not found: {best_tree_file}\")
-    """,
-    name="__"
-)
-
-
-@app.cell
-def __():
-    return
+            print(f"Best tree file not found: {best_tree_file}")
+    return (
+        best_error_rate,
+        best_tree_file,
+        dat,
+        dat_star,
+        error_rate,
+        file_name,
+        file_name_2,
+        max_log_lik,
+        max_log_lik_index,
+        mean_log_lik,
+        new_tree_file,
+        normalised_dat,
+        sd_log_lik,
+        sd_max_lik,
+    )
 
 
 if __name__ == "__main__":

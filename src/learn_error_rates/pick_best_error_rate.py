@@ -58,25 +58,35 @@ def main():
     sd_log_lik = np.std(normalised_dat.iloc[1:31, 1:], axis=0)
 
     # Find the best error rate
-    max_log_lik = np.max(mean_log_lik)
-    best_error_rate = error_rate[np.argmax(mean_log_lik)]
+    max_log_lik_index = np.argmax(mean_log_lik)
+    max_log_lik = mean_log_lik.iloc[max_log_lik_index]
+    best_error_rate = error_rate[max_log_lik_index]
+    sd_max_lik = sd_log_lik.iloc[max_log_lik_index]
 
-    formatted_error_rate = format_best_error_rate(best_error_rate)
-    print(f"Best error rate: {formatted_error_rate}") 
+    # Create data frame for best error rate
+    data = {
+        "best_error_rate": [best_error_rate],
+        "mean_likelihood": [max_log_lik],
+        "sd_likelihood": [sd_max_lik]
+    }
+    df = pd.DataFrame(data)
 
     # Determine the best tree file path
     output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
-    #best_tree_file = os.path.join(output_dir, f"learned_{formatted_error_rate}_0_map0.gv")
-    #new_tree_file = os.path.join(output_dir, "best_learned_tree_{formatted_error_rate}.gv")
-
+    
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_{best_error_rate:6f}.gv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):
         shutil.copy(best_tree_file, new_tree_file)
         print(f"Copied best tree file to {new_tree_file}")
+
+        df.to_csv(new_error_rate_file, index=False)
+        print(f"Written best error rate and likelihood to {new_error_rate_file}")
+        
     else:
         print(f"Best tree file not found: {best_tree_file}")
 
