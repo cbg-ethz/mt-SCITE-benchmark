@@ -52,3 +52,18 @@ rule perform_kcval_to_learn_error:
 
     shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir}"""
         
+rule pick_best_error_rate_and_tree:
+    input:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt"
+    output:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree.gv",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate.csv"
+    params:
+        output_dir="../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/"
+
+    shell:
+        """
+        python ../src/learn_error_rates/pick_best_error_rate.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
+
+        """
