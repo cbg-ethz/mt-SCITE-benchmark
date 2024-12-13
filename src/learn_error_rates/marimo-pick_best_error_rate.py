@@ -30,9 +30,13 @@ def __():
         pd.DataFrame: Normalized likelihood matrix.
         """
         normalised_dat = dat.copy()
-        normalised_dat.iloc[1, :] = dat.iloc[1, :] / (dat.iloc[1, :] - dat_star.iloc[1, :] + epsilon)
-        normalised_dat.iloc[2, :] = dat.iloc[2, :] / (dat.iloc[2, :] - dat_star.iloc[2, :] + epsilon)
-        normalised_dat.iloc[3, :] = dat.iloc[3, :] / (dat.iloc[3, :] - dat_star.iloc[3, :] + epsilon)
+
+        # skip first row because that has the error rates and not the likelihood values
+        for row in range(1, normalised_dat.shape[0]):
+            print(row)
+            normalised_dat.iloc[row, 1:] = dat.iloc[row, 1:] / (dat.iloc[row, 1:] - dat_star.iloc[row, 1:] + epsilon)
+            #normalised_dat.iloc[2, :] = dat.iloc[2, :] / (dat.iloc[2, :] - dat_star.iloc[2, :] + epsilon)
+            #normalised_dat.iloc[3, :] = dat.iloc[3, :] / (dat.iloc[3, :] - dat_star.iloc[3, :] + epsilon)
         return normalised_dat
 
     def format_best_error_rate(error_rate):
@@ -47,6 +51,11 @@ def __():
         """
         return f"{error_rate:.10f}".rstrip('0').rstrip('.')  # Remove trailing zeros and decimal point if unnecessary
     return compute_normalized_likelihood, format_best_error_rate
+
+
+@app.cell
+def __():
+    return
 
 
 @app.cell
@@ -100,10 +109,11 @@ def __(
     # Compute normalized likelihood
     normalised_dat = compute_normalized_likelihood(dat, dat_star, epsilon)
 
-     # Calculate error rate, mean log likelihood, and standard deviation
+    # Calculate error rate, mean log likelihood, and standard deviation
     error_rate = normalised_dat.iloc[0, 1:].values
-    mean_log_lik = np.mean(normalised_dat.iloc[1:31, 1:], axis=0)
-    sd_log_lik = np.std(normalised_dat.iloc[1:31, 1:], axis=0)
+    # take the mean and standard deviation for each error rate, excluding the error rate itself (row 1) and the index row (col 1)
+    mean_log_lik = np.mean(normalised_dat.iloc[1:normalised_dat.shape[0], 1:], axis=0)
+    sd_log_lik = np.std(normalised_dat.iloc[1:normalised_dat.shape[0], 1:], axis=0)
 
     # Find the best error rate
     max_log_lik_index = np.argmax(mean_log_lik)
@@ -139,6 +149,31 @@ def __(
         sd_log_lik,
         sd_max_lik,
     )
+
+
+@app.cell
+def __():
+    return
+
+
+@app.cell
+def __():
+    return
+
+
+@app.cell
+def __():
+    return
+
+
+@app.cell
+def __():
+    return
+
+
+@app.cell
+def __():
+    return
 
 
 if __name__ == "__main__":

@@ -18,9 +18,10 @@ def compute_normalized_likelihood(dat, dat_star, epsilon):
     pd.DataFrame: Normalized likelihood matrix.
     """
     normalised_dat = dat.copy()
-    normalised_dat.iloc[1, :] = dat.iloc[1, :] / (dat.iloc[1, :] - dat_star.iloc[1, :] + epsilon)
-    normalised_dat.iloc[2, :] = dat.iloc[2, :] / (dat.iloc[2, :] - dat_star.iloc[2, :] + epsilon)
-    normalised_dat.iloc[3, :] = dat.iloc[3, :] / (dat.iloc[3, :] - dat_star.iloc[3, :] + epsilon)
+    # skip first row because that has the error rates and not the likelihood values
+    for row in range(1, normalised_dat.shape[0]):
+        normalised_dat.iloc[row, 1:] = dat.iloc[row, 1:] / (dat.iloc[row, 1:] - dat_star.iloc[row, 1:] + epsilon)
+
     return normalised_dat
 
 def format_best_error_rate(error_rate):
@@ -51,11 +52,14 @@ def main():
 
     # Compute normalized likelihood
     normalised_dat = compute_normalized_likelihood(dat, dat_star, args.epsilon)
+    n_row = normalised_dat.shape[0]
 
     # Calculate error rate, mean log likelihood, and standard deviation
     error_rate = normalised_dat.iloc[0, 1:].values
-    mean_log_lik = np.mean(normalised_dat.iloc[1:31, 1:], axis=0)
-    sd_log_lik = np.std(normalised_dat.iloc[1:31, 1:], axis=0)
+    # Take the mean and standard deviation for each error rate, excluding the error rate
+    # itself (row 0) and the index row (col 0)
+    mean_log_lik = np.mean(normalised_dat.iloc[1:n_row, 1:], axis=0)
+    sd_log_lik = np.std(normalised_dat.iloc[1:n_row, 1:], axis=0)
 
     # Find the best error rate
     max_log_lik_index = np.argmax(mean_log_lik)
