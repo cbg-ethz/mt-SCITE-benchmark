@@ -51,14 +51,33 @@ rule perform_kcval_to_learn_error:
         input_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}"
 
     shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir}"""
+
+
+rule pick_best_error_rate_given_only_tree_lik:
+    input:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt",
+        "../src/learn_error_rates/pick_best_error_rate_lik_only.py"
+    output:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_1.gv",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate_1.csv"
+    params:
+        output_dir="../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/"
+
+    shell:
+        """
+        python ../src/learn_error_rates/pick_best_error_rate_lik_only.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
+        """
+
         
 rule pick_best_error_rate_and_tree:
     input:
         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt",
+        "../src/learn_error_rates/pick_best_error_rate.py"
     output:
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree.gv",
-        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate.csv"
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_2.gv",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate_2.csv"
     params:
         output_dir="../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/"
 
@@ -67,3 +86,43 @@ rule pick_best_error_rate_and_tree:
         python ../src/learn_error_rates/pick_best_error_rate.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
 
         """
+
+rule pick_best_error_rate_and_tree_diff:
+    input:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt",
+        "../src/learn_error_rates/pick_best_error_rate_diff.py"
+    output:
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_3.gv",
+        "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate_3.csv"
+    params:
+        output_dir="../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/"
+
+    shell:
+        """
+        python ../src/learn_error_rates/pick_best_error_rate_diff.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
+        """
+
+
+        
+# This is to compare against just the division of logLik and log star
+# rule pick_best_error_rate_and_tree_2:
+#     input:
+#         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+#         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores_star_trees.txt",
+#         "../src/learn_error_rates/pick_best_error_rate_2.py"
+#     output:
+#         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_2.gv",
+#         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_error_rate_2.csv"
+#     params:
+#         output_dir="../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/"
+
+#     shell:
+#         """
+#         python ../src/learn_error_rates/pick_best_error_rate_2.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
+
+#         """
+
+
+
+

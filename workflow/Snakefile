@@ -64,10 +64,23 @@ configfile: "config.yaml"
 #         )
 
 # run mt scite with error rate learning
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
+#         )
+
 rule all:
     input:
         expand(
-            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
+            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_1.gv",
             num_mutations=config['num_mutations'],
             concentration=config['concentration'],
             error_rate=config['error_rate'],
