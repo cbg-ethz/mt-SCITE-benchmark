@@ -18,12 +18,25 @@ def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
     pd.DataFrame: Normalized likelihood matrix.
     """
     normalised_dat = dat.copy()
+
     # skip first row because that has the error rates and not the likelihood values
     for row in range(1, normalised_dat.shape[0]):
-        #normalised_dat.iloc[row, 1:] = (
-        #    dat.iloc[row, 1:] 
-        #    - np.log(epsilon + np.exp(dat_star.iloc[row, 1:])))
-        normalised_dat.iloc[row, 1:] = dat.iloc[row, 1:] - dat_star.iloc[row, 1:]
+
+         # Compute the minimum tree likelihood
+        min_tree_log_lik = np.min(dat.iloc[row, 1:])
+
+        # Define the threshold as 10 × minimum tree likelihood
+        threshold = 10 * min_tree_log_lik
+
+        # Threshold the star tree log-likelihood
+        bounded_log_star = np.maximum(dat_star.iloc[row, 1:], threshold)
+
+        print(f"This is the min tree log lik: {min_tree_log_lik}")
+        print(f"This is the bounded star tree lik: {bounded_log_star}")
+
+        # Compute the log-likelihood difference
+        normalised_dat.iloc[row, 1:] = (
+            dat.iloc[row, 1:]  - bounded_log_star)
 
     return normalised_dat
 
@@ -65,7 +78,7 @@ def main():
     sd_log_lik = np.std(normalised_dat.iloc[1:n_row, 1:], axis=0)
 
     # Find the best error rate
-    max_log_lik_index = np.argmin(mean_log_lik)
+    max_log_lik_index = np.argmax(mean_log_lik)
     max_log_lik = mean_log_lik.iloc[max_log_lik_index]
     best_error_rate = error_rate[max_log_lik_index]
     sd_max_lik = sd_log_lik.iloc[max_log_lik_index]
@@ -83,8 +96,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_2.gv")
-    new_error_rate_file = os.path.join(output_dir, "best_error_rate_2.csv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree_3.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate_3.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):

@@ -5,27 +5,6 @@ import os
 import argparse
 import shutil
 
-def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
-    """
-    Compute the normalized likelihood matrix from the input data and star data.
-
-    Parameters:
-    dat (pd.DataFrame): Tree likelihood on heldout data
-    dat_star (pd.DataFrame): Star tree likelihood on heldout data
-    epsilon (float): Small value to avoid dominance of star tree likelihood.
-
-    Returns:
-    pd.DataFrame: Normalized likelihood matrix.
-    """
-    normalised_dat = dat.copy()
-    # skip first row because that has the error rates and not the likelihood values
-    for row in range(1, normalised_dat.shape[0]):
-        #normalised_dat.iloc[row, 1:] = (
-        #    dat.iloc[row, 1:] 
-        #    - np.log(epsilon + np.exp(dat_star.iloc[row, 1:])))
-        normalised_dat.iloc[row, 1:] = dat.iloc[row, 1:] - dat_star.iloc[row, 1:]
-
-    return normalised_dat
 
 def format_best_error_rate(error_rate):
     """
@@ -51,10 +30,10 @@ def main():
 
     # Load data
     dat = pd.read_csv(args.tree_scores_file, header=None)
-    dat_star = pd.read_csv(args.star_tree_scores_file, header=None)
+    #dat_star = pd.read_csv(args.star_tree_scores_file, header=None)
 
-    # Compute normalized likelihood
-    normalised_dat = compute_normalized_likelihood(dat, dat_star, args.epsilon)
+    # Use just tree likelihood
+    normalised_dat = dat #compute_normalized_likelihood(dat, dat_star, args.epsilon)
     n_row = normalised_dat.shape[0]
 
     # Calculate error rate, mean log likelihood, and standard deviation
@@ -83,8 +62,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_2.gv")
-    new_error_rate_file = os.path.join(output_dir, "best_error_rate_2.csv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree_1.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate_1.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):
