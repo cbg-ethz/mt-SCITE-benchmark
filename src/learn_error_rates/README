@@ -1,0 +1,11 @@
+# Learning the error rate using different metrics
+
+1) Tree Likelihood
+2) Log Likelihood Ratio
+3) Thresholded Log Likelihood Ratio (local)
+4) Thresholded Log Likelihood Ratio (global)
+5) Quotient of Log Likelihoods
+6) Product of Log Likelihoods
+
+Each is computed by the respective function pick_best_error_rate_[number].py and
+generates the files best_learned_tree_[number].py

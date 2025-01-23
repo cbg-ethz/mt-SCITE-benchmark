@@ -19,14 +19,14 @@ def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
     """
     normalised_dat = dat.copy()
 
-    # Compute the minimum tree likelihood
-    min_tree_log_lik = np.min(dat.iloc[1:, 1:])
-
     # Define the threshold as 10 × minimum tree likelihood
     threshold =  10 * min_tree_log_lik
     # skip first row because that has the error rates and not the likelihood values
     for row in range(1, normalised_dat.shape[0]):
 
+        # Compute the minimum tree likelihood
+        min_tree_log_lik = np.min(dat.iloc[1:, 1:])
+    
         # Threshold the star tree log-likelihood
         bounded_log_star = np.maximum(dat_star.iloc[row, 1:], threshold)
 
@@ -95,8 +95,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_5.gv")
-    new_error_rate_file = os.path.join(output_dir, "best_error_rate_5.csv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree_3.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate_3.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):

@@ -19,23 +19,13 @@ def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
     """
     normalised_dat = dat.copy()
 
-    # Compute the minimum tree likelihood
-    min_tree_log_lik = np.min(dat.iloc[1:, 1:])
-
-    # Define the threshold as 10 × minimum tree likelihood
-    threshold =  10 * min_tree_log_lik
     # skip first row because that has the error rates and not the likelihood values
     for row in range(1, normalised_dat.shape[0]):
 
-        # Threshold the star tree log-likelihood
-        bounded_log_star = np.maximum(dat_star.iloc[row, 1:], threshold)
-
-        print(f"This is the min tree log lik: {min_tree_log_lik}")
-        print(f"This is the bounded star tree lik: {bounded_log_star}")
-
         # Compute the log-likelihood difference
         normalised_dat.iloc[row, 1:] = (
-            dat.iloc[row, 1:]  - bounded_log_star)
+            dat.iloc[row, 1:]  / dat_star.iloc[row, 1:]
+        )
 
     return normalised_dat
 

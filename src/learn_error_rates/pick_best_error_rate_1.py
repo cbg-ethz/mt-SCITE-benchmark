@@ -5,39 +5,6 @@ import os
 import argparse
 import shutil
 
-def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
-    """
-    Compute the normalized likelihood matrix from the input data and star data.
-
-    Parameters:
-    dat (pd.DataFrame): Tree likelihood on heldout data
-    dat_star (pd.DataFrame): Star tree likelihood on heldout data
-    epsilon (float): Small value to avoid dominance of star tree likelihood.
-
-    Returns:
-    pd.DataFrame: Normalized likelihood matrix.
-    """
-    normalised_dat = dat.copy()
-
-    # Compute the minimum tree likelihood
-    min_tree_log_lik = np.min(dat.iloc[1:, 1:])
-
-    # Define the threshold as 10 × minimum tree likelihood
-    threshold =  10 * min_tree_log_lik
-    # skip first row because that has the error rates and not the likelihood values
-    for row in range(1, normalised_dat.shape[0]):
-
-        # Threshold the star tree log-likelihood
-        bounded_log_star = np.maximum(dat_star.iloc[row, 1:], threshold)
-
-        print(f"This is the min tree log lik: {min_tree_log_lik}")
-        print(f"This is the bounded star tree lik: {bounded_log_star}")
-
-        # Compute the log-likelihood difference
-        normalised_dat.iloc[row, 1:] = (
-            dat.iloc[row, 1:]  - bounded_log_star)
-
-    return normalised_dat
 
 def format_best_error_rate(error_rate):
     """
@@ -63,10 +30,9 @@ def main():
 
     # Load data
     dat = pd.read_csv(args.tree_scores_file, header=None)
-    dat_star = pd.read_csv(args.star_tree_scores_file, header=None)
 
-    # Compute normalized likelihood
-    normalised_dat = compute_normalized_likelihood(dat, dat_star, args.epsilon)
+    # Compute Tree likelihood
+    normalised_dat = dat
     n_row = normalised_dat.shape[0]
 
     # Calculate error rate, mean log likelihood, and standard deviation
@@ -77,7 +43,7 @@ def main():
     sd_log_lik = np.std(normalised_dat.iloc[1:n_row, 1:], axis=0)
 
     # Find the best error rate
-    max_log_lik_index = np.argmax(mean_log_lik)
+    max_log_lik_index = np.argmin(mean_log_lik)
     max_log_lik = mean_log_lik.iloc[max_log_lik_index]
     best_error_rate = error_rate[max_log_lik_index]
     sd_max_lik = sd_log_lik.iloc[max_log_lik_index]
@@ -95,8 +61,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_5.gv")
-    new_error_rate_file = os.path.join(output_dir, "best_error_rate_5.csv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree_1.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate_1.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):

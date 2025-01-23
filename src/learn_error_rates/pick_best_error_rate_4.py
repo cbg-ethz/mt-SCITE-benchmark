@@ -95,8 +95,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     
     best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_5.gv")
-    new_error_rate_file = os.path.join(output_dir, "best_error_rate_5.csv")
+    new_tree_file = os.path.join(output_dir, f"best_learned_tree_4.gv")
+    new_error_rate_file = os.path.join(output_dir, "best_error_rate_4.csv")
     
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):
