@@ -20,6 +20,23 @@ configfile: "config.yaml"
 #             initial_mutation_freq=config['initial_mutation_freqs']
 #         )
 
+# # run simulation with erroneous mutations
+# rule all:
+#     input:
+#         expand(
+#             "../results/simulated_data_with_err_muts/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}_{n_err_mutations}_{n_err_samples}/read_counts_{seed}.npy",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             inf_error_rate=config['inf_error_rates'],
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs'],
+#             n_err_mutations=config['n_err_mutations'],
+#             n_err_samples=config['n_err_samples']
+#         )
+
 # run mt scite with fixed error rates
 # rule all:
 #     input:
@@ -63,24 +80,11 @@ configfile: "config.yaml"
 #             initial_mutation_freq=config['initial_mutation_freqs']
 #         )
 
-# run mt scite with error rate learning
-# rule all:
-#     input:
-#         expand(
-#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
-#             num_mutations=config['num_mutations'],
-#             concentration=config['concentration'],
-#             error_rate=config['error_rate'],
-#             num_reads=config['num_reads'],
-#             num_cells=config['num_cells'],
-#             seed=config['seeds'],
-#             initial_mutation_freq=config['initial_mutation_freqs']
-#         )
-
+# #run mt scite with error rate learning
 rule all:
     input:
         expand(
-            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_1.gv",
+            "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
             num_mutations=config['num_mutations'],
             concentration=config['concentration'],
             error_rate=config['error_rate'],
@@ -89,6 +93,19 @@ rule all:
             seed=config['seeds'],
             initial_mutation_freq=config['initial_mutation_freqs']
         )
+
+# rule all:
+#     input:
+#         expand(
+#             "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/best_learned_tree_6.gv",
+#             num_mutations=config['num_mutations'],
+#             concentration=config['concentration'],
+#             error_rate=config['error_rate'],
+#             num_reads=config['num_reads'],
+#             num_cells=config['num_cells'],
+#             seed=config['seeds'],
+#             initial_mutation_freq=config['initial_mutation_freqs']
+#         )
 
 
 
