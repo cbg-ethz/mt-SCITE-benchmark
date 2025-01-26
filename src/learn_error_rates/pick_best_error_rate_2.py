@@ -20,7 +20,6 @@ def compute_normalized_likelihood(dat, dat_star, epsilon=1e-10):
     normalised_dat = dat.copy()
 
     # Define the threshold as 10 × minimum tree likelihood
-    threshold =  10 * min_tree_log_lik
     # skip first row because that has the error rates and not the likelihood values
     for row in range(1, normalised_dat.shape[0]):
 
