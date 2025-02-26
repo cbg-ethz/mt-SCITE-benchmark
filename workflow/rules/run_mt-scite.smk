@@ -40,7 +40,7 @@ rule generate_mutation_probability_matrices_for_range_of_error_rates:
     shell:
         """
         python ../src/learn_error_rates/compute_mutation_probs_for_error_learning.py {wildcards.error_rate} {params.input_dir} {params.output_dir} {wildcards.seed}
-        touch ../results/inference_output/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}/seed_{wildcards.seed}/mutation_probs.done
+        touch ../results/inference_output/{wildcards.num_mutations}_{wildcards.concentration}_{wildcards.error_rate}_{wildcards.num_reads}_{wildcards.num_cells}_{wildcards.initial_mutation_freq}/seed_{wildcards.seed}/mutation_probs.done
         """
 
 rule perform_kcval_to_learn_error:
@@ -53,7 +53,7 @@ rule perform_kcval_to_learn_error:
     params:
         input_dir = "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}"
 
-    shell:"""python ../software/mt-SCITE/scripts/cv_without_filtering.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir}"""
+    shell:"""python ../software/mt-SCITE/scripts/cv.py --mtscite_bin_path ../software/mt-SCITE/mtscite --directory {params.input_dir} -o {params.input_dir} -n False"""
 
 
 rule pick_best_error_rate_given_tree_likelihood:
@@ -85,7 +85,7 @@ rule pick_best_error_rate_given_LLR:
 
     shell:
         """
-        python ../src/learn_error_rates/pick_best_error_2.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
+        python ../src/learn_error_rates/pick_best_error_rate_2.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
         """
 
 rule pick_best_error_rate_given_LLR_local:
@@ -119,7 +119,7 @@ rule pick_best_error_rate_given_LLR_global:
         """
         python ../src/learn_error_rates/pick_best_error_rate_4.py --tree_scores_file {input[0]} --star_tree_scores_file {input[1]} --output_dir {params.output_dir}
         """
-
+# This is the metric we ultimately use in the manuscript
 rule pick_best_error_rate_given_LLQ:
     input:
         "../results/inference_output/{num_mutations}_{concentration}_{error_rate}_{num_reads}_{num_cells}_{initial_mutation_freq}/seed_{seed}/val_scores.txt",
