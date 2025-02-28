@@ -67,7 +67,7 @@ def main():
     sd_log_lik = np.std(normalised_dat.iloc[1:n_row, 1:], axis=0)
 
     # Find the best error rate
-    max_log_lik_index = np.argmax(mean_log_lik)
+    max_log_lik_index = np.argmin(mean_log_lik)
     max_log_lik = mean_log_lik.iloc[max_log_lik_index]
     best_error_rate = error_rate[max_log_lik_index]
     sd_max_lik = sd_log_lik.iloc[max_log_lik_index]
