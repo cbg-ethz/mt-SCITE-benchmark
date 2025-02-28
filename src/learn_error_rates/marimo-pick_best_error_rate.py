@@ -33,10 +33,8 @@ def __():
 
         # skip first row because that has the error rates and not the likelihood values
         for row in range(1, normalised_dat.shape[0]):
-            print(row)
             normalised_dat.iloc[row, 1:] = dat.iloc[row, 1:] / (dat.iloc[row, 1:] - dat_star.iloc[row, 1:] + epsilon)
-            #normalised_dat.iloc[2, :] = dat.iloc[2, :] / (dat.iloc[2, :] - dat_star.iloc[2, :] + epsilon)
-            #normalised_dat.iloc[3, :] = dat.iloc[3, :] / (dat.iloc[3, :] - dat_star.iloc[3, :] + epsilon)
+            
         return normalised_dat
 
     def format_best_error_rate(error_rate):
@@ -63,9 +61,9 @@ def __():
     # Input parameters
     n_cells = 500
     n_mutations = 10
-    true_error_rate = 0.05
-    seed = 1
-    initial_mut_freq = 0.1
+    true_error_rate = 0.0005
+    seed = 3
+    initial_mut_freq = 0.01
     epsilon = 0.0001
     return (
         epsilon,
@@ -123,9 +121,9 @@ def __(
 
 
     # Output the result
-    best_tree_file = f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/learned_{best_error_rate}_0_map0.gv"
+    best_tree_file = f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/learned_{best_error_rate:6f}_0_map0.gv"
 
-    new_tree_file =f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/best_learned_tree_{best_error_rate}_0_map0.gv"
+    new_tree_file =f"../../results/inference_output/{n_mutations}_120_{true_error_rate}_500_{n_cells}_{initial_mut_freq}/seed_{seed}/best_learned_tree_{best_error_rate:6f}_0_map0.gv"
 
     # Copy the best tree file to the new file
     if os.path.exists(best_tree_file):

@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.9.14"
+__generated_with = "0.8.3"
 app = marimo.App(width="medium")
 
 
@@ -38,7 +38,7 @@ def __():
 
 @app.cell
 def __(input_dir, os, output_dir):
-    seed_nr = 1 
+    seed_nr = 2
     input_file = os.path.join(input_dir, f"read_counts_{seed_nr}.npy")
     input_file
     output_dir_seed = os.path.join(output_dir, f"seed_{seed_nr}")
@@ -72,11 +72,16 @@ def __():
 
 
 @app.cell
-def __(create_scite_mutation_dict):
+def __():
     import pydot
     import networkx as nx
     import matplotlib.pyplot as plt
 
+    def create_scite_mutation_dict(n):
+        # Create dictionary with node n+1 mapped to 0
+        mutation_dict = {str(n+1): '0'}
+
+        return mutation_dict
 
     def get_tree_from_gv(dot_file):
 
@@ -98,7 +103,17 @@ def __(create_scite_mutation_dict):
 
     tree_1 = get_tree_from_gv(f)
     tree_true = nx.read_gml(f_true)
-    return f, f_true, get_tree_from_gv, nx, plt, pydot, tree_1, tree_true
+    return (
+        create_scite_mutation_dict,
+        f,
+        f_true,
+        get_tree_from_gv,
+        nx,
+        plt,
+        pydot,
+        tree_1,
+        tree_true,
+    )
 
 
 @app.cell
@@ -168,12 +183,12 @@ def __(np):
                 for i in range(0, 10):
                     true_tree = true_trees[i]
                     inferred_tree = inferred_trees[i]
-                    
+
                     distance = compute_normalised_parent_child_distance(true_tree.edges, 
                                                                         inferred_tree.edges) 
                     #print(distance)
                     distances.append(distance)
-        
+
                 avg_distances.append(np.mean(distances))
                 sd_distances.append(np.std(distances))
             #for inferred_trees in inferred_trees_list:
@@ -189,11 +204,7 @@ def __(np):
             return [avg_distances, sd_distances]
 
 
-    def create_scite_mutation_dict(n):
-        # Create dictionary with node n+1 mapped to 0
-        mutation_dict = {str(n+1): '0'}
 
-        return mutation_dict
 
     def generate_error_rates(true_error_rate):
         """Generate 20 error rates spaced logarithmically between min and max."""
@@ -208,7 +219,6 @@ def __(np):
         compute_average_distances,
         compute_normalised_parent_child_distance,
         compute_parent_child_distance,
-        create_scite_mutation_dict,
         generate_error_rates,
     )
 
@@ -229,7 +239,7 @@ def __(mo):
 def __(nx, os, plt):
     path_to_truth = "../../results/simulated_data/"
     true_error_rate = 0.005
-    condition = f"10_120_{true_error_rate}_500_500_0.1"
+    condition = f"10_120_{true_error_rate}_500_500_0.01"
     true_tree_file = os.path.join(path_to_truth, condition, "tree_1.gml")
     true_tree = nx.read_gml(true_tree_file)
     print(true_tree)
@@ -245,9 +255,9 @@ def __(nx, os, plt):
 
 
 @app.cell
-def __(condition, generate_error_rates, os, true_error_rate):
+def __(condition, generate_error_rates, os, seed_nr, true_error_rate):
     inference_output_dir = "../../results/inference_output/"
-    seed_dir = "seed_1"
+    seed_dir = f"seed_{seed_nr}"
     inf_error_rates = generate_error_rates(true_error_rate)
 
     inferred_trees_dir = os.path.join(inference_output_dir, condition, seed_dir )
@@ -329,10 +339,10 @@ def __(avg_distances, sd_distances):
 
 
 @app.cell
-def __(condition, os):
-    figure_file = os.path.join("plots", f"{condition}_tree_topol_dist.png")
+def __(condition, os, seed_nr):
+    figure_file = os.path.join("plots", f"{condition}_{seed_nr}_tree_topol_dist.png")
     figure_file
-    return (figure_file,)
+    return figure_file,
 
 
 @app.cell
@@ -340,17 +350,18 @@ def __(
     avg_distances,
     figure_file,
     inf_error_rates,
+    np,
     plt,
     sd_distances,
     true_error_rate,
 ):
-    plt.errorbar(inf_error_rates, avg_distances, yerr=sd_distances, fmt='o', capsize=5, label='Mean distances')
+    plt.errorbar(np.log(inf_error_rates), avg_distances, yerr=sd_distances, fmt='o', capsize=5, label='Mean distances')
 
     # Customize plot
-    plt.xscale('log')  # Use logarithmic scale for error rates
-    plt.xlabel('Log Error Rates')
-    plt.ylabel('Normalised Parent-Child Distance')
-    plt.axvline(true_error_rate, color='green', linestyle='--', label='True error rate')
+    #plt.xscale('log')  # Use logarithmic scale for error rates
+    plt.xlabel('Log error rates')
+    plt.ylabel('Normalised parent-child distance')
+    plt.axvline(np.log(true_error_rate), color='green', linestyle='--', label='True error rate')
 
     #plt.title('Mean Distances with Error Bars')
     plt.legend()
@@ -385,7 +396,7 @@ def __(mo):
 @app.cell
 def __():
     from networkx.drawing.nx_pydot import write_dot
-    return (write_dot,)
+    return write_dot,
 
 
 @app.cell
