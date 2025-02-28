@@ -460,14 +460,14 @@ def __(
             for i in range(0, 10):
                 true_tree = true_trees[i]
                 inferred_tree = inferred_trees[i]
-                
+
                 distance = compute_normalised_parent_child_distance(true_tree.edges, inferred_tree.edges) 
                 #print(distance)
                 distances.append(distance)
 
             avg_distances.append(np.mean(distances))
             sd_distances.append(np.std(distances))
-            
+
             #for true_tree in true_trees:
                 # Compute distance to each inferred tree for each true tree
             #    for inferred_tree in inferred_trees:
@@ -477,7 +477,7 @@ def __(
             # Calculate average distance for this method
         #avg_distances.append(np.mean(distances))
         #sd_distances.append(np.std(distances))
-        
+
         return [avg_distances, sd_distances]
     return (
         compute_average_distances,
@@ -521,62 +521,63 @@ def __(load_trees, os):
         true_trees = load_trees(true_path_template, seed_range, "true")
 
         return true_trees
-        
+
     def get_inferred_trees(true_error_rate=0.05, condition="10_120_0.05_500_500_0.1", inferred_error_rates=[0.05, 0.005, 0.0005]):
 
-        
+
         # Define file path templates for ground truth trees
         simulation_output_dir = "../../results/simulated_data/"
-        
-        
+
+
         # Define file path templates for each method
         dat_dir = "../../results/inference_output/"
         path_to_condition = os.path.join(dat_dir, condition)
-        
+
         scite_path_template_0 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[0]}_[seed]_ml0.newick")
         scite_path_template_1 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[1]}_[seed]_ml0.newick")
         scite_path_template_2 = os.path.join(path_to_condition, f"scite_{inferred_error_rates[2]}_[seed]_ml0.newick")
-        
-        
+
+
         mtscite_path_template_0 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[0]}_[seed]_map0.newick")
-        
+
         mtscite_path_template_1 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[1]}_[seed]_map0.newick")
-        
+
         mtscite_path_template_2 = os.path.join(path_to_condition, f"mt_scite_mutation_prob_{inferred_error_rates[2]}_[seed]_map0.newick")
-        
+
+        mtscite_path_template_3 = os.path.join(path_to_condition, f"seed_[seed]", f"best_learned_tree_1.newick")
+
         merlin_path_template = os.path.join(path_to_condition, "merlin_[seed]_clone_tree_edge_list.txt")
-        
+
         # Load trees for each method using the generalized function
         seed_range = range(1, 11)
         scite_trees_0 = load_trees(scite_path_template_0, seed_range, "scite")
         scite_trees_1 = load_trees(scite_path_template_1, seed_range, "scite")
         scite_trees_2 = load_trees(scite_path_template_2, seed_range, "scite")
-        
+
         mtscite_trees_0 = load_trees(mtscite_path_template_0, seed_range, "mtscite")
         mtscite_trees_1 = load_trees(mtscite_path_template_1, seed_range, "mtscite")
         mtscite_trees_2 = load_trees(mtscite_path_template_2, seed_range, "mtscite")
+        mtscite_trees_3 = load_trees(mtscite_path_template_3, seed_range, "mtscite")
+
         merlin_trees = load_trees(merlin_path_template, seed_range, "merlin")
-        
-        inferred_trees_list = [merlin_trees, scite_trees_0, scite_trees_1, scite_trees_2, mtscite_trees_0, mtscite_trees_1, mtscite_trees_2]
-        method_names = ['Merlin', 'SCITE', 'SCITE', 'SCITE', 'mtSCITE', 'mtSCITE', 'mtSCITE']
+
+        inferred_trees_list = [merlin_trees, scite_trees_0, scite_trees_1, scite_trees_2, mtscite_trees_0, mtscite_trees_1, mtscite_trees_2, mtscite_trees_3]
+        method_names = ['Merlin', 'SCITE', 'SCITE', 'SCITE', 'mt-SCITE', 'mt-SCITE', 'mt-SCITE', 'mt-SCITE']
 
         return inferred_trees_list, method_names
-        
-
     return get_inferred_trees, get_true_trees
 
 
 @app.cell
 def __(compute_average_distances, get_inferred_trees, get_true_trees, pd):
-
     true_error_rates = [0.05, 0.005, 0.0005]
     inferred_error_rates = [0.05, 0.005, 0.0005]
-    error_rates = ["None"] +  inferred_error_rates + inferred_error_rates
+    error_rates = ["None"] +  inferred_error_rates + inferred_error_rates + ["Learned"]
     dfs = []
 
     for true_error_rate in true_error_rates:
 
-        condition = f"10_120_{true_error_rate}_500_500_0.01"
+        condition = f"10_120_{true_error_rate}_500_500_0.1"
 
         true_trees = get_true_trees(true_error_rate, condition)
         print(f"Compiled data for true error rate {true_error_rate}")
@@ -615,7 +616,8 @@ def __(compute_average_distances, get_inferred_trees, get_true_trees, pd):
 
 
 @app.cell
-def __():
+def __(combined_df):
+    combined_df
     return
 
 
@@ -626,9 +628,10 @@ def __():
 
 @app.cell
 def __():
-    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual, theme_bw, theme, facet_wrap
+    from plotnine import ggplot, aes, geom_bar, geom_errorbar, labs, theme, position_dodge, scale_fill_manual, theme_bw, theme, facet_wrap, element_text
     return (
         aes,
+        element_text,
         facet_wrap,
         geom_bar,
         geom_errorbar,
@@ -646,6 +649,7 @@ def __(
     aes,
     combined_df,
     condition,
+    element_text,
     facet_wrap,
     geom_bar,
     geom_errorbar,
@@ -656,7 +660,6 @@ def __(
     theme,
     theme_bw,
 ):
-
     plot_2 = (
         ggplot(combined_df, aes(x="Method", y="Avg_Distance", 
                        fill= "factor(Error_Rate)",
@@ -672,27 +675,74 @@ def __(
             y="Normalised Parent-Child Distance",
             fill="Fixed Error rates"
         )
-        + scale_fill_manual(values=["#ffd700",
-    "#ffb14e",
-    "#fa8775"])+
+        
+        + scale_fill_manual(values=['#a9cdeb','#7b99c2', '#3e597f', '#4c804c'])+
         theme_bw()+
-        theme(legend_position= "top")
+        theme(legend_position= "top", 
+              text=element_text(size=12),
+              axis_title=element_text(size=14))
+
 
 
     )
     plot_2.show()
-    plot_2.save(f"../../results/plots/{condition}_combined_fixedErrors_tree_topology_comparison.png", width=15, height=10, dpi=300)
+    plot_2.save(f"../../results/plots/{condition}_combined_fixedErrors_tree_topology_comparison.svg", width=15, height=10, dpi=300)
+    plot_2.save(f"../../results/plots/{condition}_combined_fixedErrors_tree_topology_comparison.pdf", width=15, height=10, dpi=300)
     return (plot_2,)
 
 
 @app.cell
-def __():
-    return
+def __(combined_df):
+    combined_df_learned = combined_df[(combined_df["Method"] != "mt-SCITE") | (combined_df["Error_Rate"] == "Learned")]
+
+    return (combined_df_learned,)
 
 
 @app.cell
-def __():
-    return
+def __(
+    aes,
+    combined_df_learned,
+    condition,
+    element_text,
+    facet_wrap,
+    geom_bar,
+    geom_errorbar,
+    ggplot,
+    labs,
+    position_dodge,
+    scale_fill_manual,
+    theme,
+    theme_bw,
+):
+    plot_learned = (
+        ggplot(combined_df_learned, aes(x="Method", y="Avg_Distance", 
+                       fill= "factor(Error_Rate)",
+                       group= "factor(Error_Rate)"))+
+        geom_bar(stat = "identity", width=0.7, position = position_dodge(0.7))+
+        facet_wrap('~True_Error_Rate')+
+        geom_errorbar(aes(ymin="Avg_Distance - 0.5 * Sd_Distance",
+                          ymax="Avg_Distance + 0.5 * Sd_Distance"), 
+                      width=0.2, position=position_dodge(0.7))+
+
+        labs(
+            x="Method",
+            y="Normalised Parent-Child Distance",
+            fill="Fixed Error rates"
+        )
+        
+        + scale_fill_manual(values=['#a9cdeb', '#7b99c2','#3e597f', '#4c804c'])+
+        theme_bw()+
+        theme(legend_position= "top", 
+              text=element_text(size=12),
+              axis_title=element_text(size=14))
+
+
+
+    )
+    plot_learned.show()
+    plot_learned.save(f"../../results/plots/{condition}_learned_tree_topology_comparison.svg", width=15, height=10, dpi=300)
+    plot_learned.save(f"../../results/plots/{condition}_learned_tree_topology_comparison.pdf", width=15, height=10, dpi=300)
+    return (plot_learned,)
 
 
 @app.cell
