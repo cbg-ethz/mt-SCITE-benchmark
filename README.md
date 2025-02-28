@@ -1,8 +1,11 @@
 # mt-scite-benchmark
 
-Simulate benchmark data.
+Simulate benchmark data and perform inference using mt-SCITE, SCITE and Merlin using the snakemake workflow under workflow.
 
-Decide on params:
-1) num_reads = 500, based on dataset yf_2001, see script src/exploratory/determine_num_reads.R
+The simulation code can be found in ./src/simulation.
 
-2) error_rate; in Joannas paper: 8e-4 to 6e-2, thus set to: [5e-4, 5e-3, 5e-2]
+The functions that choose an error rate given the results of the k-fold cross validation procedure are available under ./src/learn_error_rates/
+
+Under ./software, I stored the working versions of mt-SCITE, SCITE and Merlin.
+
+To produce the figures of the method comparison, use the script ./src/method_comparison/marimo-plot-method-comparion.py
