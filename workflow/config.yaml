@@ -11,3 +11,6 @@ initial_mutation_freqs: [0.01, 0.1]
 
 ## Paramter ranges for inference using mt-scite
 inf_error_rates: [0.0005, 0.005, 0.05]
+
+n_err_mutations: [10, 20]
+n_err_samples: [2, 5, 10]
