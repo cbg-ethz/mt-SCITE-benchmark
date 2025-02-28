@@ -1,4 +1,4 @@
-# mt-scite-benchmark
+# mt-SCITE-benchmark
 
 Simulate benchmark data and perform inference using mt-SCITE, SCITE and Merlin using the snakemake workflow under workflow.
 
