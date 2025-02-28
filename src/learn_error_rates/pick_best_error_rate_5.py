@@ -84,14 +84,25 @@ def main():
     output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
     
-    best_tree_file = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_map0.gv")
-    new_tree_file = os.path.join(output_dir, f"best_learned_tree_5.gv")
+    best_tree_file_gv = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_0_map0.gv")
+    best_tree_file_newick = os.path.join(output_dir, f"learned_{best_error_rate:6f}_0_0_map0.newick")
+
+    new_tree_file_gv = os.path.join(output_dir, f"best_learned_tree_5.gv")
+    new_tree_file_newick = os.path.join(output_dir, f"best_learned_tree_5.newick")
+    
     new_error_rate_file = os.path.join(output_dir, "best_error_rate_5.csv")
     
     # Copy the best tree file to the new file
-    if os.path.exists(best_tree_file):
-        shutil.copy(best_tree_file, new_tree_file)
-        print(f"Copied best tree file to {new_tree_file}")
+    ## For gv file
+    if os.path.exists(best_tree_file_gv):
+        shutil.copy(best_tree_file_gv, new_tree_file_gv)
+        print(f"Copied best tree file to {new_tree_file_gv}")
+
+    ## For newick file
+    if os.path.exists(best_tree_file_newick):
+        shutil.copy(best_tree_file_newick, new_tree_file_newick)
+        print(f"Copied best tree file to {new_tree_file_newick}")
+    
 
         df.to_csv(new_error_rate_file, index=False)
         print(f"Written best error rate and likelihood to {new_error_rate_file}")
